@@ -39,7 +39,7 @@
 }
 html{font-size:16px;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
 body{font-family:var(--sans);color:var(--fg);background:var(--bg);min-height:100dvh;line-height:1.5;overflow-x:hidden}
-.app{max-width:480px;margin:0 auto;padding:0 20px 100px}
+.app{max-width:480px;margin:0 auto;padding:0 20px 100px;padding-top:env(safe-area-inset-top);padding-bottom:max(100px,env(safe-area-inset-bottom))}
 @media(min-width:768px){
   .app{max-width:560px;padding:0 32px 100px}
 }
@@ -932,7 +932,9 @@ function initBreathe(){
   if(initBtn&&PAT[cPat])initBtn.style.setProperty('--pat-color',PAT[cPat].hex);
 
   // Single tap on circle to start/stop
+  let swipedRecently=false;
   $('breathScene').addEventListener('click',(e)=>{
+    if(swipedRecently)return;
     if(inApneaHold)return;
     if(bRunning)stopB();else startB();
   });
@@ -943,7 +945,6 @@ function initBreathe(){
     if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
     if(e.code==='Space'){e.preventDefault();if(inApneaHold)return;if(bRunning)stopB();else startB();}
     if(e.code==='Escape'&&bRunning){e.preventDefault();stopB();}
-    // Arrow left/right to cycle voice
     if(e.code==='ArrowLeft'||e.code==='ArrowRight'){
       e.preventDefault();cycleVoice(e.code==='ArrowRight'?1:-1);
     }
@@ -961,9 +962,11 @@ function initBreathe(){
   $('breathScene').addEventListener('touchend',(e)=>{
     const dx=e.changedTouches[0].clientX-touchStartX;
     const dy=e.changedTouches[0].clientY-touchStartY;
-    // Only trigger if horizontal swipe is dominant and >50px
     if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){
       cycleVoice(dx>0?1:-1);
+      // Suppress the click that fires after touchend
+      swipedRecently=true;
+      setTimeout(()=>{swipedRecently=false;},400);
     }
   },{passive:true});
 
