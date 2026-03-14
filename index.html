@@ -292,10 +292,11 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           </div>
           <div class="apnea-table-preview" id="apneaPreview"></div>
         </div>
-        <div class="breath-controls">
-          <div class="breath-control-group"><div class="breath-control-label">Voice</div><select class="breath-select" id="breathVoice"><option value="drone">Warm drone</option><option value="throat">Overtone</option><option value="wind">Wind</option><option value="silent">Silent</option></select></div>
-          <div class="breath-control-group"><div class="breath-control-label">Duration</div><select class="breath-select" id="breathRounds"></select></div>
-        </div>
+      </div>
+
+      <div class="breath-controls">
+        <div class="breath-control-group"><div class="breath-control-label">Voice</div><select class="breath-select" id="breathVoice"><option value="drone">Warm drone</option><option value="throat">Overtone</option><option value="wind">Wind</option><option value="silent">Silent</option></select></div>
+        <div class="breath-control-group"><div class="breath-control-label">Duration</div><select class="breath-select" id="breathRounds"></select></div>
       </div>
 
       <div class="breath-progress" id="breathProgress"></div>
@@ -880,6 +881,16 @@ function updateBreathSummary(){
   $('breathSelTime').textContent=time?time.textContent:'';
 }
 
+function cycleVoice(dir){
+  const sel=$('breathVoice');
+  const opts=[...sel.options];
+  let idx=sel.selectedIndex+dir;
+  if(idx<0)idx=opts.length-1;
+  if(idx>=opts.length)idx=0;
+  sel.selectedIndex=idx;
+  showToast(opts[idx].textContent);
+}
+
 function initBreathe(){
   // Populate duration selector in minutes
   const sel=$('breathRounds');
@@ -932,10 +943,29 @@ function initBreathe(){
     if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
     if(e.code==='Space'){e.preventDefault();if(inApneaHold)return;if(bRunning)stopB();else startB();}
     if(e.code==='Escape'&&bRunning){e.preventDefault();stopB();}
+    // Arrow left/right to cycle voice
+    if(e.code==='ArrowLeft'||e.code==='ArrowRight'){
+      e.preventDefault();cycleVoice(e.code==='ArrowRight'?1:-1);
+    }
     const patKeys=['observe','box','478','coherent','bellows','physiological','apnea'];
     const num=parseInt(e.key);
     if(num>=1&&num<=7&&!bRunning){const btn=document.querySelector(`.breath-pattern-btn[data-pattern="${patKeys[num-1]}"]`);if(btn)btn.click();}
   });
+
+  // Swipe left/right on breath scene to cycle voice (mobile)
+  let touchStartX=0,touchStartY=0;
+  $('breathScene').addEventListener('touchstart',(e)=>{
+    touchStartX=e.touches[0].clientX;
+    touchStartY=e.touches[0].clientY;
+  },{passive:true});
+  $('breathScene').addEventListener('touchend',(e)=>{
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    const dy=e.changedTouches[0].clientY-touchStartY;
+    // Only trigger if horizontal swipe is dominant and >50px
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){
+      cycleVoice(dx>0?1:-1);
+    }
+  },{passive:true});
 
   initCosmicParticles();
   $('cosmicCanvas').style.display='none';
