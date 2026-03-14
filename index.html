@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Ground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --serif:'EB Garamond','Georgia',serif;
+  --sans:'DM Sans',-apple-system,sans-serif;
+  --bg:#0C0E0A;
+  --bg2:#131610;
+  --fg:#E8E6DE;
+  --fg-mid:#B5B09E;
+  --fg-soft:#7A7668;
+  --fg-faint:#454231;
+  --line:#1E2118;
+  --surface:#151813;
+  --toggle-off:#3A3830;
+  --c-body:#6B8C42;
+  --c-mind:#5A8BA5;
+  --c-spirit:#C49A4A;
+  --c-apnea:#3D7A9E;
+  --c-body-dim:rgba(107,140,66,0.13);
+  --c-mind-dim:rgba(90,139,165,0.13);
+  --c-spirit-dim:rgba(196,154,74,0.12);
+  --accent:#6B8C42;
+  --accent-bright:#8FB55A;
+  --ochre:#C49A4A;
+  --leaf-glow:rgba(74,122,50,0.15);
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --ease-breath:cubic-bezier(0.4,0,0.2,1);
+}
+html{font-size:16px;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);color:var(--fg);background:var(--bg);min-height:100dvh;line-height:1.5;overflow-x:hidden}
+.app{max-width:480px;margin:0 auto;padding:0 20px 100px}
+@media(min-width:768px){
+  .app{max-width:560px;padding:0 32px 100px}
+}
+@media(min-width:1024px){
+  .app{max-width:600px;padding:0 40px 100px}
+}
+/* iOS form element overrides */
+input,textarea,select{-webkit-appearance:none;-moz-appearance:none;appearance:none;font-size:16px;color-scheme:dark}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A7668' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.topbar{display:flex;justify-content:space-between;align-items:baseline;padding:24px 0 16px;border-bottom:1px solid var(--line)}
+.topbar-title{font-family:var(--serif);font-size:1.5rem;font-weight:400;letter-spacing:-0.02em}
+.topbar-date{font-size:0.75rem;color:var(--fg-soft);letter-spacing:0.05em;text-transform:uppercase;font-weight:500}
+.nav{display:flex;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-item{flex:none;padding:14px 16px 12px;font-size:0.75rem;font-weight:600;color:var(--fg-faint);letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:color 0.2s,border-color 0.2s;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none}
+.nav-item:hover{color:var(--fg-soft)}
+.nav-item.active{color:var(--fg);border-bottom-color:var(--accent-bright)}
+.section{display:none;padding-top:28px;animation:sIn 0.35s var(--ease-out) both}
+.section.active{display:block}
+@keyframes sIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.section-sub{font-size:0.88rem;color:var(--fg-soft);margin-bottom:28px;line-height:1.5;font-style:italic;font-family:var(--serif)}
+
+/* ═══ DAILY LENS ═══ */
+.daily-lens{margin-bottom:24px;padding:16px 0;border-bottom:1px solid var(--line)}
+.daily-lens-quality{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+.daily-lens-quality.q-reverence{color:var(--c-spirit)}
+.daily-lens-quality.q-vitality{color:var(--c-body)}
+.daily-lens-quality.q-play{color:var(--c-spirit)}
+.daily-lens-quality.q-tenderness{color:var(--c-mind)}
+.daily-lens-quality.q-curiosity{color:var(--c-mind)}
+.daily-lens-quality.q-aliveness{color:var(--accent-bright)}
+.daily-lens-prompt{font-family:var(--serif);font-style:italic;font-size:1.05rem;line-height:1.5;color:var(--fg-mid)}
+.breath-logged{font-size:0.72rem;color:var(--fg-faint);text-align:center;margin-bottom:16px;min-height:1em}
+
+/* Selected pattern summary bar */
+.breath-selected{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color 0.2s;margin-bottom:8px;width:100%}
+.breath-selected:hover{border-color:var(--fg-faint)}
+.breath-selected-inner{min-width:0}
+.breath-selected-name{font-weight:600;font-size:0.88rem;color:var(--fg)}
+.breath-selected-desc{font-size:0.72rem;color:var(--fg-soft);margin-top:1px}
+.breath-selected-time{font-size:0.72rem;color:var(--fg-faint);font-variant-numeric:tabular-nums;flex-shrink:0;margin-left:12px}
+
+/* Collapsible drawer */
+.breath-drawer{display:none;width:100%;margin-bottom:8px}
+.breath-drawer.open{display:block}
+
+/* ═══ BREATHE ═══ */
+.breath-container{display:flex;flex-direction:column;align-items:center;padding:10px 0 0}
+.breath-scene{position:relative;width:260px;height:260px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.breath-canvas{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;pointer-events:none;z-index:0}
+.breath-glow{position:absolute;width:120px;height:120px;border-radius:50%;filter:blur(40px);opacity:0;transition:opacity 1.2s,width 2s var(--ease-breath),height 2s var(--ease-breath);pointer-events:none;z-index:0}
+.breath-glow.inhale{opacity:1;width:340px;height:340px}
+.breath-glow.exhale{opacity:0.4;width:140px;height:140px}
+.breath-circle{position:relative;width:140px;height:140px;border-radius:50%;border:1.5px solid var(--fg-faint);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;transition-property:transform,border-color,background,box-shadow;transition-timing-function:var(--ease-breath);background:transparent;z-index:2}
+.breath-phase{font-family:var(--serif);font-size:1.15rem;font-style:italic;color:var(--fg-mid);user-select:none}
+.breath-countdown{font-size:0.8rem;font-variant-numeric:tabular-nums;color:var(--fg-soft);min-height:1.2em}
+.breath-tap-hint{font-size:0.68rem;color:var(--fg-faint);margin-top:6px;transition:opacity 0.3s}
+.breath-info{display:flex;gap:24px;justify-content:center;margin-bottom:24px;font-size:0.78rem;color:var(--fg-soft);font-variant-numeric:tabular-nums;min-height:1.2em}
+.breath-patterns{display:flex;flex-direction:column;gap:8px;width:100%;margin-bottom:20px}
+.breath-pattern-btn{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;transition:border-color 0.2s,background 0.2s;-webkit-tap-highlight-color:transparent}
+.breath-pattern-btn:hover{border-color:var(--fg-faint)}
+.breath-pattern-btn.active{border-color:var(--pat-color,var(--accent));background:var(--pat-color,var(--accent));background:color-mix(in srgb, var(--pat-color,var(--accent)) 13%, var(--surface))}
+.breath-pattern-name{font-weight:600;font-size:0.88rem;color:var(--fg)}
+.breath-pattern-desc{font-size:0.75rem;color:var(--fg-soft);margin-top:1px}
+.breath-pattern-time{font-size:0.7rem;color:var(--fg-faint);font-variant-numeric:tabular-nums}
+.breath-controls{display:flex;gap:12px;width:100%;margin-bottom:20px}
+.breath-control-group{flex:1;display:flex;flex-direction:column;gap:6px}
+.breath-control-label{font-size:0.68rem;font-weight:600;color:var(--fg-faint);letter-spacing:0.06em;text-transform:uppercase}
+.breath-select{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font-family:var(--sans);font-size:0.85rem;outline:none;-webkit-appearance:none;cursor:pointer}
+.breath-select:focus{border-color:var(--accent)}
+.breath-select option{background:var(--bg2);color:var(--fg)}
+.breath-progress{display:flex;gap:6px;margin-top:16px;min-height:10px}
+.breath-dot{width:7px;height:7px;border-radius:50%;background:var(--fg-faint);transition:background 0.4s,transform 0.3s var(--ease-spring)}
+.breath-dot.done{background:var(--accent-bright);transform:scale(1.15)}
+.breath-dot.active{background:var(--fg-mid);transform:scale(1.3)}
+.breath-guide-toggle{font-size:0.76rem;color:var(--fg-faint);text-align:center;margin-top:20px;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:8px;transition:color 0.2s}
+.breath-guide-toggle:hover{color:var(--fg-soft)}
+.breath-guide{display:none;margin-top:12px;padding:16px 0;border-top:1px solid var(--line)}
+.breath-guide.open{display:block}
+.breath-guide p{font-family:var(--serif);font-size:0.88rem;line-height:1.6;color:var(--fg-soft);margin-bottom:12px}
+.breath-guide p:last-child{margin-bottom:0}
+.breath-guide strong{color:var(--fg-mid);font-weight:600;font-family:var(--sans);font-size:0.82rem}
+
+/* Apnea config */
+.apnea-config{display:none;width:100%;margin-bottom:20px}
+.apnea-config.show{display:block}
+.apnea-table-preview{margin-top:12px;font-size:0.76rem;color:var(--fg-soft);line-height:1.6;font-variant-numeric:tabular-nums}
+.apnea-table-preview .arow{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)}
+.apnea-table-preview .arow:last-child{border-bottom:none}
+.apnea-table-preview .alabel{color:var(--fg-faint)}
+/* Apnea hold display */
+.apnea-hold-display{font-family:var(--serif);font-size:2.4rem;font-weight:400;color:var(--fg);text-align:center;font-variant-numeric:tabular-nums;min-height:1em}
+.apnea-hold-hint{font-size:0.72rem;color:var(--fg-faint);text-align:center;margin-top:4px}
+
+/* ═══ LOG ═══ */
+.ground-group{margin-bottom:28px}
+.ground-group-title{font-size:0.7rem;font-weight:700;color:var(--fg-faint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px}
+.ground-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.ground-item:last-child{border-bottom:none}
+.ground-item-left{display:flex;flex-direction:column;gap:2px}
+.ground-item-label{font-size:0.95rem;font-weight:500}
+.ground-item-why{font-size:0.76rem;color:var(--fg-soft);font-family:var(--serif);font-style:italic}
+.toggle{width:44px;height:26px;border-radius:13px;background:var(--toggle-off);position:relative;cursor:pointer;transition:background 0.25s;flex-shrink:0}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--bg2);box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:transform 0.25s var(--ease-spring)}
+.toggle.on::after{transform:translateX(18px)}
+.toggle.on.body{background:var(--c-body)}
+.toggle.on.mind{background:var(--c-mind)}
+.toggle.on.spirit{background:var(--c-spirit)}
+.ground-num{display:flex;align-items:center;gap:8px}
+.ground-num input{width:64px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-family:var(--sans);font-size:0.9rem;color:var(--fg);text-align:right;outline:none;transition:border-color 0.2s}
+.ground-num input:focus{border-color:var(--accent)}
+.ground-num .unit{font-size:0.76rem;color:var(--fg-soft)}
+
+/* ═══ REFLECT ═══ */
+.reflect-prompt{font-family:var(--serif);font-size:1.2rem;font-style:italic;color:var(--fg-mid);margin-bottom:20px;line-height:1.5}
+.reflect-textarea{width:100%;min-height:140px;padding:16px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--serif);font-size:1.05rem;line-height:1.65;color:var(--fg);resize:vertical;outline:none;transition:border-color 0.2s}
+.reflect-textarea:focus{border-color:var(--accent)}
+.reflect-textarea::placeholder{color:var(--fg-faint)}
+.reflect-saved{font-size:0.76rem;color:var(--fg-soft);margin-top:8px;min-height:1.2em}
+.reflect-closing{margin-top:32px;padding-top:20px;border-top:1px solid var(--line);font-family:var(--serif);font-style:italic;font-size:0.9rem;line-height:1.55;color:var(--fg-faint);min-height:1em;transition:opacity 0.6s}
+.energy-label{font-size:0.7rem;font-weight:700;color:var(--fg-faint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px}
+.energy-row{display:flex;gap:6px;margin-bottom:8px}
+.energy-btn{flex:1;padding:10px 4px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-size:0.76rem;font-weight:500;color:var(--fg-soft);text-align:center;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent}
+.energy-btn:hover{border-color:var(--fg-faint)}
+.energy-btn.active{border-color:var(--accent);background:var(--c-body-dim);color:var(--fg)}
+.attune-row{display:flex;gap:8px;margin-top:24px}
+.attune-btn{flex:1;padding:10px 4px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-family:var(--serif);font-size:0.9rem;font-style:italic;color:var(--fg-soft);text-align:center;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent}
+.attune-btn:hover{border-color:var(--fg-faint)}
+.attune-btn.active-attuned{border-color:var(--c-body);background:var(--c-body-dim);color:var(--fg)}
+.attune-btn.active-chasing{border-color:var(--ochre);background:var(--c-spirit-dim);color:var(--fg)}
+
+/* ═══ RHYTHM ═══ */
+.rhythm-week-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.rhythm-week-label{font-family:var(--serif);font-size:1rem;color:var(--fg-mid)}
+.rhythm-nav-btn{padding:6px 14px;border:1px solid var(--line);border-radius:6px;background:transparent;font-size:0.78rem;color:var(--fg-soft);cursor:pointer;font-family:var(--sans);-webkit-tap-highlight-color:transparent;transition:border-color 0.2s}
+.rhythm-nav-btn:hover{border-color:var(--fg-faint)}
+.rhythm-rings-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:24px}
+.rhythm-day-col{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:6px 2px;border-radius:8px;transition:background 0.2s}
+.rhythm-day-col:hover{background:var(--line)}
+.rhythm-day-col.selected{background:rgba(107,140,66,0.1)}
+.rhythm-dow{font-size:0.6rem;color:var(--fg-faint);text-transform:uppercase;letter-spacing:0.05em;font-weight:600}
+.rhythm-dom{font-size:0.82rem;font-weight:600;color:var(--fg-mid)}
+.rhythm-day-col.today .rhythm-dom{color:var(--accent-bright)}
+.rhythm-ring-svg{width:44px;height:44px}
+.rhythm-legend{display:flex;justify-content:center;gap:20px;margin-bottom:20px;font-size:0.7rem;color:var(--fg-soft)}
+.rhythm-legend-item{display:flex;align-items:center;gap:6px}
+.rhythm-legend-dot{width:8px;height:8px;border-radius:50%}
+.rhythm-summary{padding:16px 0;border-top:1px solid var(--line)}
+.rhythm-reflection{padding:0 0 16px;font-family:var(--serif);font-style:italic;font-size:0.92rem;line-height:1.55;color:var(--fg-soft);min-height:1em}
+.rhythm-stat-row{display:flex;justify-content:space-between;padding:5px 0;font-size:0.85rem}
+.rhythm-stat-label{color:var(--fg-soft)}
+.rhythm-stat-value{font-weight:600;font-variant-numeric:tabular-nums;color:var(--fg)}
+.rhythm-month-head{font-size:0.7rem;font-weight:700;color:var(--fg-faint);letter-spacing:0.08em;text-transform:uppercase;margin-top:24px;margin-bottom:12px}
+.rhythm-month-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.rhythm-month-label{font-family:var(--serif);font-size:0.95rem;color:var(--fg-mid)}
+.month-dow-row{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:4px;font-size:0.55rem;color:var(--fg-faint);text-align:center;text-transform:uppercase;letter-spacing:0.04em}
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.month-cell{display:flex;flex-direction:column;align-items:center;gap:1px;aspect-ratio:0.85;cursor:pointer;transition:opacity 0.15s;position:relative;background:transparent;padding:2px 0}
+.month-cell:hover{opacity:0.8}
+.month-cell.empty{cursor:default;pointer-events:none}
+.month-cell .mc-num{font-size:0.62rem;color:var(--fg-faint);font-weight:600;line-height:1}
+.month-cell.today .mc-num{color:var(--accent-bright)}
+.month-cell .mini-ring{width:38px;height:38px;flex-shrink:0}
+
+/* ═══ DATA ═══ */
+.settings-group{padding:20px 0;border-bottom:1px solid var(--line)}
+.settings-group:last-child{border-bottom:none}
+.settings-group-title{font-size:0.7rem;font-weight:700;color:var(--fg-faint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px}
+.settings-btn{display:block;width:100%;padding:12px 0;border:none;background:transparent;font-family:var(--sans);font-size:0.9rem;color:var(--fg-mid);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.settings-btn:hover{color:var(--accent-bright)}
+.settings-btn.danger{color:#B85C5C}
+.settings-btn.danger:hover{color:#D46B6B}
+.settings-note{font-size:0.78rem;color:var(--fg-soft);line-height:1.55;font-family:var(--serif);font-style:italic}
+/* ═══ INSIGHTS ═══ */
+.insight-card{padding:14px 0;border-bottom:1px solid var(--line)}
+.insight-card:last-child{border-bottom:none}
+.insight-title{font-size:0.78rem;font-weight:600;color:var(--fg-soft);margin-bottom:8px}
+.insight-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:0.82rem}
+.insight-label{color:var(--fg-soft)}
+.insight-value{font-weight:600;font-variant-numeric:tabular-nums}
+.insight-bar-row{display:flex;align-items:center;gap:8px;padding:3px 0}
+.insight-bar-label{font-size:0.75rem;color:var(--fg-soft);width:54px;text-align:right;flex-shrink:0}
+.insight-bar{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.insight-bar-fill{height:100%;border-radius:3px;transition:width 0.4s var(--ease-out)}
+.insight-bar-count{font-size:0.7rem;color:var(--fg-faint);width:24px;flex-shrink:0}
+.weight-spark{display:flex;align-items:flex-end;gap:1px;height:40px;margin-top:4px}
+.weight-spark-bar{flex:1;min-width:2px;max-width:6px;border-radius:1px 1px 0 0;background:var(--accent);opacity:0.6}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);padding:10px 24px;background:var(--fg);color:var(--bg);border-radius:8px;font-size:0.82rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity 0.3s,transform 0.3s var(--ease-out);z-index:200;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar"><div class="topbar-title">Ground</div><div class="topbar-date" id="topDate"></div></div>
+  <nav class="nav">
+    <div class="nav-item active" data-section="breathe">Breathe</div>
+    <div class="nav-item" data-section="ground">Log</div>
+    <div class="nav-item" data-section="reflect">Reflect</div>
+    <div class="nav-item" data-section="rhythm">Rhythm</div>
+    <div class="nav-item" data-section="settings">Data</div>
+  </nav>
+
+  <!-- BREATHE -->
+  <div class="section active" id="sec-breathe">
+    <div class="section-sub" style="margin-top:4px">Before you do anything, arrive.</div>
+    <div class="daily-lens" id="dailyLens"></div>
+    <div class="breath-container">
+      <div class="breath-scene" id="breathScene">
+        <canvas class="breath-canvas" id="cosmicCanvas" width="260" height="260"></canvas>
+        <div class="breath-glow" id="breathGlow"></div>
+        <div class="breath-circle" id="breathCircle">
+          <span class="breath-phase" id="breathPhase">Ready</span>
+          <span class="breath-countdown" id="breathCountdown"></span>
+        </div>
+        <div class="breath-tap-hint" id="tapHint" style="position:absolute;bottom:-8px;z-index:3">tap to begin</div>
+      </div>
+      <div class="breath-info" id="breathInfo"></div>
+      <div class="breath-logged" id="breathLogged"></div>
+
+      <!-- Collapsed: shows selected pattern, tap to expand -->
+      <div class="breath-selected" id="breathSelected">
+        <div class="breath-selected-inner">
+          <div class="breath-selected-name" id="breathSelName">Observe</div>
+          <div class="breath-selected-desc" id="breathSelDesc">Follow your breath without controlling it</div>
+        </div>
+        <div class="breath-selected-time" id="breathSelTime">2 min</div>
+      </div>
+
+      <!-- Expandable drawer -->
+      <div class="breath-drawer" id="breathDrawer">
+        <div class="breath-patterns" id="breathPatterns">
+          <div class="breath-pattern-btn active" data-pattern="observe"><div><div class="breath-pattern-name">Observe</div><div class="breath-pattern-desc">Follow your breath without controlling it</div></div><div class="breath-pattern-time" id="timeObserve"></div></div>
+          <div class="breath-pattern-btn" data-pattern="box"><div><div class="breath-pattern-name">Box breath</div><div class="breath-pattern-desc">4–4–4–4 · calm the nervous system</div></div><div class="breath-pattern-time" id="timeBox"></div></div>
+          <div class="breath-pattern-btn" data-pattern="478"><div><div class="breath-pattern-name">4-7-8</div><div class="breath-pattern-desc">4–7–8 · deep relaxation</div></div><div class="breath-pattern-time" id="time478"></div></div>
+          <div class="breath-pattern-btn" data-pattern="coherent"><div><div class="breath-pattern-name">Coherent</div><div class="breath-pattern-desc">5.5 in, 5.5 out · the universe breathes you</div></div><div class="breath-pattern-time" id="timeCoherent"></div></div>
+          <div class="breath-pattern-btn" data-pattern="bellows"><div><div class="breath-pattern-name">Bhastrika</div><div class="breath-pattern-desc">Rapid equal breaths · wake up the body</div></div><div class="breath-pattern-time" id="timeBellows"></div></div>
+          <div class="breath-pattern-btn" data-pattern="physiological"><div><div class="breath-pattern-name">Physiological sigh</div><div class="breath-pattern-desc">Double inhale, long exhale · acute stress</div></div><div class="breath-pattern-time" id="timePhysiological"></div></div>
+          <div class="breath-pattern-btn" data-pattern="apnea"><div><div class="breath-pattern-name">Apnea training</div><div class="breath-pattern-desc">CO₂ and O₂ tables · freedive breath-hold</div></div><div class="breath-pattern-time" id="timeApnea"></div></div>
+        </div>
+        <div class="apnea-config" id="apneaConfig">
+          <div class="breath-control-group"><div class="breath-control-label">Table type</div>
+            <select class="breath-select" id="apneaType">
+              <option value="co2">CO₂ — fixed hold, shrinking rest</option>
+              <option value="o2">O₂ — fixed rest, growing hold</option>
+            </select>
+          </div>
+          <div class="breath-control-group" style="margin-top:10px"><div class="breath-control-label">Your max hold (seconds)</div>
+            <select class="breath-select" id="apneaMax"></select>
+          </div>
+          <div class="apnea-table-preview" id="apneaPreview"></div>
+        </div>
+        <div class="breath-controls">
+          <div class="breath-control-group"><div class="breath-control-label">Voice</div><select class="breath-select" id="breathVoice"><option value="drone">Warm drone</option><option value="throat">Overtone</option><option value="wind">Wind</option><option value="silent">Silent</option></select></div>
+          <div class="breath-control-group"><div class="breath-control-label">Duration</div><select class="breath-select" id="breathRounds"></select></div>
+        </div>
+      </div>
+
+      <div class="breath-progress" id="breathProgress"></div>
+      <div class="breath-guide-toggle" id="breathGuideToggle">Practice guide</div>
+      <div class="breath-guide" id="breathGuide">
+        <p>Do breath-work with a straight spine, sitting or lying comfortably. Practise when you first wake, before bed, and as the need arises.</p>
+        <p><strong>Observe</strong> — the most subtle and powerful practice. Follow your breath without trying to influence it. This is the essence of meditation. Start by noticing the exhale first; you will naturally deepen your breathing by increasing exhalation.</p>
+        <p><strong>4-7-8</strong> — the relaxing breath. Begin with 4 cycles, twice a day. Over weeks, build to 8 cycles, twice a day. Use when anxious, upset, or experiencing cravings.</p>
+        <p><strong>Bhastrika</strong> — the bellows breath, a stimulating exercise. Use to increase alertness when drowsy or to sharpen focus. Work up to one full minute.</p>
+        <p><strong>Coherent</strong> — the surrender breath. Use when falling asleep or waking up. Lie down and feel yourself as the passive recipient of breath. As you inhale, the universe blows breath into you, expanding into every part of your body, even your fingers and toes. As you exhale, the universe withdraws air from you — you are not pushing it out, it is being gently taken.</p>
+        <p><strong>To prepare for meditation:</strong> Bhastrika for 1 minute, followed by 8 cycles of 4-7-8.</p>
+        <p><strong>When upset:</strong> Make your breath deeper, quieter, slower, and more regular. When agitated, breathing is rapid, shallow, irregular, and noisy. You cannot always tell yourself not to be upset, but you can control your breathing.</p>
+        <p><strong>Apnea training</strong> — CO₂ tables hold your breath at a fixed time while shortening rest intervals, training CO₂ tolerance. O₂ tables keep rest fixed while lengthening hold time, training oxygen efficiency. Set your current max hold and the app generates 8 rounds. During the breathe phase, breathe slowly and calmly through the nose — belly rises on inhale, falls on exhale. No deep gulps, no fast breathing. Just tidal breath, as though you were about to fall asleep. A chime will warn you three seconds before the hold begins. Take one final full breath, then hold. Tap to release when you need to breathe. Always train lying down, never in water alone.</p>
+        <p>Regularity matters more than intensity. Daily practice, over time, changes the function of the nervous system.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG -->
+  <div class="section" id="sec-ground">
+    <div class="section-sub" style="margin-top:4px">The essentials. Nothing more.</div>
+    <div class="ground-group"><div class="ground-group-title">Body</div>
+      <div class="ground-item" data-key="moved"><div class="ground-item-left"><div class="ground-item-label">Moved</div><div class="ground-item-why">Any deliberate physical effort</div></div><div class="toggle body" data-key="moved"></div></div>
+      <div class="ground-item" data-key="sleptWell"><div class="ground-item-left"><div class="ground-item-label">Slept well</div><div class="ground-item-why">Enough rest, roughly on rhythm</div></div><div class="toggle body" data-key="sleptWell"></div></div>
+      <div class="ground-item" data-key="nourished"><div class="ground-item-left"><div class="ground-item-label">Nourished</div><div class="ground-item-why">Ate with intention, not compulsion</div></div><div class="toggle body" data-key="nourished"></div></div>
+      <div class="ground-item" data-key="alcoholFree"><div class="ground-item-left"><div class="ground-item-label">Clear vessel</div><div class="ground-item-why">Alcohol-free</div></div><div class="toggle body" data-key="alcoholFree"></div></div>
+    </div>
+    <div class="ground-group"><div class="ground-group-title">Mind</div>
+      <div class="ground-item" data-key="meditated"><div class="ground-item-left"><div class="ground-item-label">Found stillness</div><div class="ground-item-why">Any contemplative pause</div></div><div class="toggle mind" data-key="meditated"></div></div>
+      <div class="ground-item" data-key="learned"><div class="ground-item-left"><div class="ground-item-label">Learned or made</div><div class="ground-item-why">Read, studied, or practiced a skill</div></div><div class="toggle mind" data-key="learned"></div></div>
+    </div>
+    <div class="ground-group"><div class="ground-group-title">Spirit</div>
+      <div class="ground-item" data-key="observed"><div class="ground-item-left"><div class="ground-item-label">Observed life</div><div class="ground-item-why">Noticed another species — backyard or beyond</div></div><div class="toggle spirit" data-key="observed"></div></div>
+      <div class="ground-item" data-key="connected"><div class="ground-item-left"><div class="ground-item-label">Played</div><div class="ground-item-why">Joyful contact with another being</div></div><div class="toggle spirit" data-key="connected"></div></div>
+    </div>
+    <div class="ground-group"><div class="ground-group-title">Metrics</div>
+      <div class="ground-item"><div class="ground-item-left"><div class="ground-item-label">Weight</div></div><div class="ground-num"><input type="text" inputmode="decimal" id="inWeight" placeholder="—"/><span class="unit">kg</span></div></div>
+    </div>
+  </div>
+
+  <!-- REFLECT -->
+  <div class="section" id="sec-reflect">
+    <div class="section-sub" style="margin-top:4px">One honest sentence is enough.</div>
+    <div class="energy-label">Energy</div>
+    <div class="energy-row" id="energyRow"><div class="energy-btn" data-val="1">Low</div><div class="energy-btn" data-val="2">Quiet</div><div class="energy-btn" data-val="3">Steady</div><div class="energy-btn" data-val="4">Bright</div><div class="energy-btn" data-val="5">Vivid</div></div>
+    <div class="energy-label" style="margin-top:20px">Attunement</div>
+    <div class="attune-row" id="attuneRow"><div class="attune-btn" data-val="attuned">Attuned</div><div class="attune-btn" data-val="chasing">Chasing</div></div>
+    <div style="margin-top:28px"><div class="reflect-prompt" id="reflectPrompt"></div><textarea class="reflect-textarea" id="reflectText" placeholder="Write here..."></textarea><div class="reflect-saved" id="reflectSaved"></div></div>
+    <div class="reflect-closing" id="reflectClosing"></div>
+  </div>
+
+  <!-- RHYTHM -->
+  <div class="section" id="sec-rhythm">
+    <div class="section-sub" style="margin-top:4px">Close the rings. Trust the shape.</div>
+    <div class="rhythm-week-nav"><button class="rhythm-nav-btn" id="rhythmPrev">&#8592;</button><div class="rhythm-week-label" id="rhythmWeekLabel"></div><button class="rhythm-nav-btn" id="rhythmNext">&#8594;</button></div>
+    <div class="rhythm-legend"><div class="rhythm-legend-item"><div class="rhythm-legend-dot" style="background:var(--c-body)"></div>Body</div><div class="rhythm-legend-item"><div class="rhythm-legend-dot" style="background:var(--c-mind)"></div>Mind</div><div class="rhythm-legend-item"><div class="rhythm-legend-dot" style="background:var(--c-spirit)"></div>Spirit</div></div>
+    <div class="rhythm-rings-row" id="rhythmGrid"></div>
+    <div class="rhythm-summary" id="rhythmSummary"></div>
+    <div class="rhythm-reflection" id="rhythmReflection"></div>
+    <div class="rhythm-month-head">Month view</div>
+    <div class="rhythm-month-nav"><button class="rhythm-nav-btn" id="monthPrev">&#8592;</button><div class="rhythm-month-label" id="monthLabel"></div><button class="rhythm-nav-btn" id="monthNext">&#8594;</button></div>
+    <div class="month-dow-row"><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div><div>Su</div></div>
+    <div class="month-grid" id="monthGrid"></div>
+  </div>
+
+  <!-- DATA -->
+  <div class="section" id="sec-settings">
+    <div class="settings-group" style="padding-top:8px"><div class="settings-group-title">Insights</div><div id="insightsWrap"></div></div>
+    <div class="settings-group"><div class="settings-group-title">Export</div><button class="settings-btn" id="btnExportJSON">Export JSON backup</button><button class="settings-btn" id="btnExportCSV">Export CSV</button></div>
+    <div class="settings-group"><div class="settings-group-title">Import</div><button class="settings-btn" id="btnImportJSON">Import JSON backup</button><input type="file" id="fileImportJSON" accept=".json" class="hidden"/></div>
+    <div class="settings-group"><div class="settings-group-title">Danger</div><button class="settings-btn danger" id="btnReset">Erase all local data</button></div>
+    <div class="settings-group"><div class="settings-note">A single file. No server, no account, no tracking. Your data lives in localStorage — export JSON regularly. For GitHub Pages, place as index.html at your repo root.</div></div>
+    <div class="settings-group" style="border-bottom:none;padding-bottom:0"><div class="settings-note" style="color:var(--fg-faint)">Ground exists so that you more readily notice, choose, and inhabit the qualities by which a life becomes radiant: reverence, vitality, play, tenderness, curiosity, and creative aliveness.</div></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+const SK='ground-v2',SC=2;
+const BODY=['moved','sleptWell','nourished','alcoholFree'];
+const MIND=['meditated','learned'];
+const SPIRIT=['observed','connected'];
+const ALL=[...BODY,...MIND,...SPIRIT];
+const MB=BODY.length,MM=MIND.length,MS=SPIRIT.length;
+
+const PAT={
+  observe:{def:0,steps:[],color:'var(--fg-soft)',hex:'#7A7668'},
+  box:{def:6,steps:[['Inhale',4],['Hold',4],['Exhale',4],['Hold',4]],color:'var(--c-body)',hex:'#6B8C42'},
+  '478':{def:4,steps:[['Inhale',4],['Hold',7],['Exhale',8]],color:'var(--c-mind)',hex:'#5A8BA5'},
+  coherent:{def:8,steps:[['Receive',5.5],['Release',5.5]],color:'var(--c-spirit)',hex:'#C49A4A'},
+  bellows:{def:6,steps:[['In',0.5],['Out',0.5],['In',0.5],['Out',0.5],['In',0.5],['Out',0.5],['In',0.5],['Out',0.5],['In',0.5],['Out',0.5],['In',0.5],['Out',0.5],['In',0.5],['Out',0.5],['In',0.5],['Out',0.5],['In',0.5],['Out',0.5],['In',0.5],['Out',0.5],['Rest',3]],color:'var(--c-body)',hex:'#8FB55A'},
+  physiological:{def:6,steps:[['Inhale',2],['Sip',1.5],['Exhale',6]],color:'var(--c-mind)',hex:'#5A8BA5'},
+  apnea:{def:0,steps:[],color:'var(--c-apnea)',hex:'#3D7A9E'}
+};
+
+/*
+  Six qualities by which a life becomes radiant.
+  Each maps to data signals that indicate its presence or absence.
+  The lens engine reads recent days and surfaces the quality most needed.
+*/
+const QUALITIES={
+  reverence:{
+    name:'Reverence',
+    css:'q-reverence',
+    signals:['observed'],
+    morning:[
+      "How will you express reverence for life today?",
+      "What living thing might you notice if you slow down?",
+      "Where could life reveal itself in minute proportions?",
+      "What would it mean to approach one creature with full attention?",
+      "What is the yard, the sky, or the nearest tree offering today?"
+    ],
+    evening:[
+      "What living thing entered your notice today?",
+      "What did you witness closely?",
+      "What species, sound, or texture stayed with you?",
+      "What did the yard, forest, or sky teach you?",
+      "Where did life reveal itself in minute proportions?"
+    ],
+    closing:[
+      "Go slowly. The living world is waiting for your attention.",
+      "You noticed. That is the beginning of reverence.",
+      "Close the screen. Open the door. Something out there is alive."
+    ]
+  },
+  vitality:{
+    name:'Vitality',
+    css:'q-vitality',
+    signals:['moved','sleptWell','nourished','alcoholFree'],
+    morning:[
+      "What does your body need from you today?",
+      "How might you become a source of vitality today?",
+      "What kind of energy will you offer — radiator or drain?",
+      "Where could aliveness enter through the body today?",
+      "What would it mean to move with intention, even briefly?"
+    ],
+    evening:[
+      "What is true in your body today?",
+      "How did you become a source of vitality?",
+      "Which energy did you offer — radiator or drain?",
+      "Where did you feel alive?",
+      "What did your body ask for that you gave it?"
+    ],
+    closing:[
+      "The body carried you through another day. Let it rest now.",
+      "You showed up. That is vitality enough.",
+      "Go. Move, or be still. Either way, inhabit yourself fully."
+    ]
+  },
+  play:{
+    name:'Play',
+    css:'q-play',
+    signals:['connected'],
+    morning:[
+      "Where might playfulness enter today?",
+      "What would it look like to take something lightly?",
+      "Who could you surprise with delight today?",
+      "What if joy didn\u2019t need a reason today?",
+      "What would you do if you weren\u2019t performing?"
+    ],
+    evening:[
+      "Where did playfulness enter?",
+      "What made your heart sing?",
+      "What did you take into your arms?",
+      "What surprised you?",
+      "What loosened in you today?"
+    ],
+    closing:[
+      "Leave room for something unplanned.",
+      "Seriousness has had its turn. Let lightness close the day.",
+      "You don\u2019t have to earn joy. It\u2019s already yours."
+    ]
+  },
+  tenderness:{
+    name:'Tenderness',
+    css:'q-tenderness',
+    signals:[],
+    attuneSignal:true,
+    morning:[
+      "What wants gentleness from you today?",
+      "Where might you soften instead of push?",
+      "What fear might try to author the day?",
+      "What would you set down if you trusted the ground?",
+      "How will you be kind to the animal of your body?"
+    ],
+    evening:[
+      "What wanted gentleness?",
+      "Where did you tighten against life?",
+      "What fear tried to author the day?",
+      "What can be set down now?",
+      "What are you grateful for?"
+    ],
+    closing:[
+      "You\u2019ve done enough. Go gently.",
+      "Set it down. The ground will hold it.",
+      "Be as kind to yourself tonight as you would be to anyone you love."
+    ]
+  },
+  curiosity:{
+    name:'Curiosity',
+    css:'q-curiosity',
+    signals:['learned','observed'],
+    morning:[
+      "What could you approach with genuine curiosity today?",
+      "Where might art and science meet in the hours ahead?",
+      "What question could you carry like a lantern today?",
+      "What would you study if no one were watching?",
+      "What in the world deserves a second look today?"
+    ],
+    evening:[
+      "What did you approach with genuine curiosity?",
+      "Where did art and science meet?",
+      "What did you notice?",
+      "What in the world felt astonishing today?",
+      "What wants your attention?"
+    ],
+    closing:[
+      "Carry the question. The answer isn\u2019t the point.",
+      "You looked closely. That changes what you\u2019ll see tomorrow.",
+      "Stay curious. It\u2019s the antidote to everything brittle."
+    ]
+  },
+  aliveness:{
+    name:'Creative Aliveness',
+    css:'q-aliveness',
+    signals:['learned','connected','observed'],
+    morning:[
+      "What will you do toward your intention today, however small?",
+      "Where is the tension between striving and being — and can you hold both?",
+      "What might emerge today that you can\u2019t plan?",
+      "What would creative aliveness look like in the next few hours?",
+      "How will you let life move through you today?"
+    ],
+    evening:[
+      "What did you do toward your intention, however small?",
+      "What\u2019s true today?",
+      "What can you let go of?",
+      "Where was the tension between striving and being?",
+      "What emerged that you didn\u2019t plan?"
+    ],
+    closing:[
+      "Something was made today, even if only a moment of presence.",
+      "Let the day compost. Tomorrow will grow from it.",
+      "You are the instrument. Rest now. The music continues."
+    ]
+  }
+};
+
+// The lens engine: reads recent days and finds the quality most needed.
+function chooseLens(date){
+  const lookback=5;
+  const counts={};
+  for(const qk of Object.keys(QUALITIES)) counts[qk]=0;
+
+  let daysChecked=0;
+  for(let i=1;i<=lookback;i++){
+    const d=addD(date,-i);
+    const e=gE(d);
+    if(!dHas(d)) continue;
+    daysChecked++;
+
+    for(const[qk,q]of Object.entries(QUALITIES)){
+      // Count how many of this quality's signal habits were on
+      if(q.signals.length>0){
+        let present=0;
+        for(const sk of q.signals) if(e[sk]===1) present++;
+        counts[qk]+=present/q.signals.length; // normalized 0-1
+      }
+      // Tenderness: check attunement — if chasing, tenderness is absent
+      if(q.attuneSignal){
+        if(e.attune==='attuned') counts[qk]+=1;
+        else if(e.attune==='chasing') counts[qk]+=0;
+        // Low energy + logged = tenderness needed but give partial credit
+        else if(e.energy && e.energy<=2) counts[qk]+=0.3;
+      }
+    }
+  }
+
+  if(daysChecked===0){
+    // No history — choose by date hash for variety
+    const qks=Object.keys(QUALITIES);
+    return qks[Math.abs(hash(date))%qks.length];
+  }
+
+  // Normalize by days checked
+  for(const qk of Object.keys(counts)) counts[qk]/=daysChecked;
+
+  // The quality with the LOWEST presence score is the one most needed
+  let minQ=null,minVal=Infinity;
+  const qks=Object.keys(QUALITIES);
+  for(const qk of qks){
+    // Add small hash-based jitter to break ties deterministically
+    const jitter=(Math.abs(hash(date+qk))%100)*0.001;
+    const val=counts[qk]+jitter;
+    if(val<minVal){minVal=val;minQ=qk;}
+  }
+  return minQ;
+}
+
+function selectPrompt(qualityKey, date, pool){
+  const q=QUALITIES[qualityKey];
+  if(!q) return '';
+  const prompts=q[pool]||q.morning;
+  const idx=Math.abs(hash(date+qualityKey+pool))%prompts.length;
+  return prompts[idx];
+}
+
+function renderLens(){
+  const lens=$('dailyLens');
+  const qk=chooseLens(selDate);
+  const q=QUALITIES[qk];
+  if(!q){lens.innerHTML='';return;}
+  const prompt=selectPrompt(qk,selDate,'morning');
+  lens.innerHTML=`<div class="daily-lens-quality ${q.css}">${q.name}</div><div class="daily-lens-prompt">${prompt}</div>`;
+}
+
+let store,selDate,rwStart,bRunning=false,bAbort=null,cPat='observe',aCtx=null,monthOffset=0;
+let activeNodes=[];
+let cosmicAnim=null;
+let cosmicParticles=[];
+let inApneaHold=false; // flag to prevent tap during apnea holds
+const $=id=>document.getElementById(id),$$=s=>document.querySelectorAll(s);
+
+// Date utils
+function isoToday(){const d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
+function addD(iso,n){const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
+function weekMon(iso){const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));return[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
+function fmtDate(iso){return new Date(iso+'T12:00:00').toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'});}
+function fmtShort(iso){return new Date(iso+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});}
+function dow2(iso){return new Date(iso+'T12:00:00').toLocaleDateString('en-AU',{weekday:'short'}).slice(0,2);}
+function dom(iso){return parseInt(iso.split('-')[2],10);}
+function hash(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return h;}
+function fmtSec(s){const m=Math.floor(s/60),sec=Math.round(s%60);return m+':'+String(sec).padStart(2,'0');}
+
+// Storage
+function loadS(){try{const r=localStorage.getItem(SK);if(r){const s=JSON.parse(r);if(s&&s.schema===SC)return s;}}catch(e){}return{schema:SC,entries:{}};}
+function saveS(){try{localStorage.setItem(SK,JSON.stringify(store));}catch(e){}}
+function gE(d){return store.entries[d]||{};}
+function pE(d,p){if(!store.entries[d])store.entries[d]={};Object.assign(store.entries[d],p);saveS();}
+
+// Scoring
+function sK(keys,d){const e=gE(d);let s=0;for(const k of keys)if(e[k]===1)s++;return s;}
+function dS(d){return sK(ALL,d);}
+function dHas(d){const e=store.entries[d];if(!e)return false;for(const k of ALL)if(e[k]===1)return true;if(e.note&&e.note.trim())return true;if(e.energy)return true;if(e.breathed===1)return true;return false;}
+
+// ═══ AUDIO ENGINE ═══
+function ac(){if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();if(aCtx.state==='suspended')aCtx.resume();return aCtx;}
+
+function killSound(){
+  activeNodes.forEach(n=>{try{n.disconnect();if(n.stop)n.stop(0);}catch(e){}});
+  activeNodes=[];
+}
+
+function trackNode(...nodes){activeNodes.push(...nodes);}
+
+// Warm drone
+function playDrone(phase,dur){
+  const c=ac(),now=c.currentTime,end=now+dur;
+  const isIn=phase==='Inhale'||phase==='Sip'||phase==='Receive';
+  const base=isIn?90:110;
+  const filter=c.createBiquadFilter();filter.type='lowpass';filter.Q.value=0.7;
+  filter.frequency.setValueAtTime(isIn?200:800,now);filter.frequency.exponentialRampToValueAtTime(isIn?900:180,end);
+  const ws=c.createWaveShaper();const curve=new Float32Array(256);for(let i=0;i<256;i++){const x=i*2/255-1;curve[i]=Math.tanh(x*1.5);}ws.curve=curve;
+  const master=c.createGain();master.gain.setValueAtTime(0,now);master.gain.linearRampToValueAtTime(1,now+Math.min(0.8,dur*0.2));master.gain.setValueAtTime(1,end-Math.min(0.8,dur*0.2));master.gain.linearRampToValueAtTime(0,end);
+  filter.connect(ws);ws.connect(master);master.connect(c.destination);
+  trackNode(filter,ws,master);
+  const freqs=[base,base*1.002,base*2,base*2.005],types=['sine','sine','triangle','sine'],vols=[0.06,0.055,0.025,0.02];
+  freqs.forEach((f,i)=>{
+    const o=c.createOscillator(),g=c.createGain();o.type=types[i];o.frequency.setValueAtTime(f,now);o.frequency.linearRampToValueAtTime(f*(isIn?1.015:0.985),end);g.gain.value=vols[i];
+    o.connect(g);g.connect(filter);o.start(now);o.stop(end+0.05);trackNode(o,g);
+  });
+}
+
+// Overtone / throat singing: low fundamental drone + precise overtone harmonics
+function playThroat(phase,dur){
+  const c=ac(),now=c.currentTime,end=now+dur;
+  const isIn=phase==='Inhale'||phase==='Sip'||phase==='Receive';
+  // Throat singing: fundamental ~75Hz with strong odd harmonics (3rd, 5th, 7th, 9th)
+  const fund=isIn?75:85;
+  const harmonics=[1, 3, 5, 7, 9];
+  const hvols=[0.06, 0.04, 0.035, 0.02, 0.012];
+
+  const master=c.createGain();
+  master.gain.setValueAtTime(0,now);
+  master.gain.linearRampToValueAtTime(1,now+Math.min(1,dur*0.2));
+  master.gain.setValueAtTime(1,end-Math.min(0.8,dur*0.2));
+  master.gain.linearRampToValueAtTime(0,end);
+  master.connect(c.destination);
+  trackNode(master);
+
+  // Bandpass filter that sweeps to emphasize different overtones
+  const bp=c.createBiquadFilter();bp.type='bandpass';bp.Q.value=3;
+  bp.frequency.setValueAtTime(isIn?fund*3:fund*7,now);
+  bp.frequency.exponentialRampToValueAtTime(isIn?fund*8:fund*3,end);
+  bp.connect(master);
+  trackNode(bp);
+
+  harmonics.forEach((h,i)=>{
+    const freq=fund*h;
+    // Slight detuning for richness
+    [0, (i%2===0?0.3:-0.3)].forEach(det=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.type=h===1?'sawtooth':'sine';
+      o.frequency.setValueAtTime(freq*(1+det*0.002),now);
+      o.frequency.linearRampToValueAtTime(freq*(1+det*0.002)*(isIn?1.01:0.99),end);
+      g.gain.value=hvols[i]*(det===0?1:0.5);
+      o.connect(g);g.connect(bp);o.start(now);o.stop(end+0.05);
+      trackNode(o,g);
+    });
+  });
+}
+
+// Wind
+function playWind(phase,dur){
+  const c=ac(),now=c.currentTime,end=now+dur;
+  const isIn=phase==='Inhale'||phase==='Sip'||phase==='Receive';
+  const len=Math.ceil(dur+1)*c.sampleRate;
+  const buf=c.createBuffer(1,len,c.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  const src=c.createBufferSource();src.buffer=buf;
+  const flt=c.createBiquadFilter();flt.type='bandpass';flt.Q.value=0.8;
+  flt.frequency.setValueAtTime(isIn?300:900,now);flt.frequency.linearRampToValueAtTime(isIn?1500:200,end);
+  const g=c.createGain();g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.09,now+Math.min(0.5,dur*0.15));
+  g.gain.setValueAtTime(0.09,end-Math.min(0.6,dur*0.2));g.gain.linearRampToValueAtTime(0,end);
+  src.connect(flt);flt.connect(g);g.connect(c.destination);src.start(now);src.stop(end+0.05);
+  trackNode(src,flt,g);
+}
+
+function playTone(phase,dur,voice){
+  if(voice==='silent')return;
+  // Bellows: short percussive bursts instead of sustained tones
+  if(phase==='In'||phase==='Out'){playBellowsBurst(phase,dur,voice);return;}
+  if(voice==='drone')playDrone(phase,dur);
+  else if(voice==='throat')playThroat(phase,dur);
+  else if(voice==='wind')playWind(phase,dur);
+}
+
+function playBellowsBurst(phase,dur,voice){
+  const c=ac(),now=c.currentTime,end=now+dur;
+  const isIn=phase==='In';
+  if(voice==='wind'){
+    // Short burst of noise
+    const len=Math.ceil(dur+0.2)*c.sampleRate;
+    const buf=c.createBuffer(1,len,c.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+    const src=c.createBufferSource();src.buffer=buf;
+    const flt=c.createBiquadFilter();flt.type='bandpass';flt.Q.value=1.5;flt.frequency.value=isIn?800:500;
+    const g=c.createGain();g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.07,now+0.05);g.gain.linearRampToValueAtTime(0,end);
+    src.connect(flt);flt.connect(g);g.connect(c.destination);src.start(now);src.stop(end+0.05);
+    trackNode(src,flt,g);
+  } else {
+    // Short pitched tap
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sine';o.frequency.value=isIn?220:160;
+    g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.04,now+0.04);g.gain.linearRampToValueAtTime(0,end);
+    o.connect(g);g.connect(c.destination);o.start(now);o.stop(end+0.05);
+    trackNode(o,g);
+  }
+}
+
+function playHold(dur,voice){
+  if(voice==='silent')return;
+  const c=ac(),now=c.currentTime,end=now+dur;
+  const o=c.createOscillator(),g=c.createGain();
+  o.type='sine';o.frequency.value=voice==='throat'?150:90;
+  g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.02,now+0.5);
+  g.gain.setValueAtTime(0.02,end-0.5);g.gain.linearRampToValueAtTime(0,end);
+  o.connect(g);g.connect(c.destination);o.start(now);o.stop(end+0.05);
+  trackNode(o,g);
+}
+
+// ═══ COSMIC CANVAS ═══
+function initCosmicParticles(){
+  cosmicParticles=[];
+  for(let i=0;i<80;i++){
+    cosmicParticles.push({
+      angle:Math.random()*Math.PI*2,
+      dist:30+Math.random()*100,
+      baseDist:30+Math.random()*100,
+      size:0.5+Math.random()*1.8,
+      speed:0.1+Math.random()*0.4,
+      alpha:0.2+Math.random()*0.6
+    });
+  }
+}
+
+function drawCosmic(phase,progress){
+  const canvas=$('cosmicCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const w=canvas.width,h=canvas.height;
+  const cx=w/2,cy=h/2;
+  ctx.clearRect(0,0,w,h);
+
+  if(!cosmicParticles.length)return;
+  const isReceive=phase==='Receive';
+  const isRelease=phase==='Release';
+
+  cosmicParticles.forEach(p=>{
+    p.angle+=p.speed*0.01;
+    let targetDist;
+    if(isReceive){
+      // Particles flow inward toward center (universe breathing into you)
+      targetDist=p.baseDist*(1-progress*0.7);
+    } else if(isRelease){
+      // Particles flow outward (universe withdrawing)
+      targetDist=p.baseDist*(0.3+progress*0.7);
+    } else {
+      targetDist=p.baseDist;
+    }
+    p.dist+=(targetDist-p.dist)*0.06;
+
+    const x=cx+Math.cos(p.angle)*p.dist;
+    const y=cy+Math.sin(p.angle)*p.dist;
+    const alpha=p.alpha*(isReceive?(0.5+progress*0.5):(isRelease?(1-progress*0.5):0.4));
+
+    ctx.beginPath();
+    ctx.arc(x,y,p.size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(196,154,74,${alpha})`;
+    ctx.fill();
+  });
+}
+
+function startCosmicLoop(){
+  const canvas=$('cosmicCanvas');
+  canvas.style.display='block';
+  function loop(){
+    cosmicAnim=requestAnimationFrame(loop);
+    // phase and progress are set externally
+    drawCosmic(cosmicPhase,cosmicProgress);
+  }
+  loop();
+}
+
+function stopCosmicLoop(){
+  if(cosmicAnim){cancelAnimationFrame(cosmicAnim);cosmicAnim=null;}
+  const canvas=$('cosmicCanvas');
+  if(canvas){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);canvas.style.display='none';}
+}
+
+let cosmicPhase='',cosmicProgress=0;
+
+// ═══ NAV ═══
+function initNav(){$$('.nav-item').forEach(el=>{el.addEventListener('click',()=>{$$('.nav-item').forEach(n=>n.classList.remove('active'));el.classList.add('active');$$('.section').forEach(s=>s.classList.remove('active'));const sec=$('sec-'+el.dataset.section);if(sec)sec.classList.add('active');const s=el.dataset.section;if(s==='ground')renderGround();if(s==='reflect')renderReflect();if(s==='rhythm')renderRhythm();if(s==='settings')renderInsights();});});}
+function renderTop(){$('topDate').textContent=fmtDate(selDate);}
+
+// ═══ BREATHE ═══
+function calcPatTime(pat,rounds){return pat.steps.reduce((a,s)=>a+s[1],0)*rounds;}
+
+function roundsForMinutes(pat,minutes){
+  const cycleSec=pat.steps.reduce((a,s)=>a+s[1],0);
+  if(cycleSec===0)return 0;
+  return Math.max(1,Math.round((minutes*60)/cycleSec));
+}
+
+function updateAllTimes(){
+  const minutes=parseInt($('breathRounds').value)||2;
+  for(const[key,pat]of Object.entries(PAT)){
+    const el=$('time'+key.charAt(0).toUpperCase()+key.slice(1));
+    if(!el)continue;
+    if(key==='observe'){
+      el.textContent=minutes+' min';
+    } else if(key==='apnea'){
+      // Apnea time comes from the table preview
+      // (updated separately via renderApneaPreview)
+    } else {
+      const rounds=roundsForMinutes(pat,minutes);
+      const totalSec=calcPatTime(pat,rounds);
+      el.textContent=rounds+' rounds / '+fmtSec(totalSec);
+    }
+  }
+}
+
+function updateBreathSummary(){
+  const active=document.querySelector('.breath-pattern-btn.active');
+  if(!active)return;
+  const name=active.querySelector('.breath-pattern-name');
+  const desc=active.querySelector('.breath-pattern-desc');
+  const time=active.querySelector('.breath-pattern-time');
+  $('breathSelName').textContent=name?name.textContent:'';
+  $('breathSelDesc').textContent=desc?desc.textContent:'';
+  $('breathSelTime').textContent=time?time.textContent:'';
+}
+
+function initBreathe(){
+  // Populate duration selector in minutes
+  const sel=$('breathRounds');
+  const durations=[1,2,3,4,5,7,10,15,20];
+  durations.forEach(m=>{
+    const o=document.createElement('option');
+    o.value=m;
+    o.textContent=m+(m===1?' min':' min');
+    sel.appendChild(o);
+  });
+  sel.value=2; // default 2 minutes
+  updateAllTimes();
+  updateBreathSummary();
+
+  sel.addEventListener('change',()=>{updateAllTimes();updateBreathSummary();});
+
+  // Summary bar toggles drawer
+  $('breathSelected').addEventListener('click',()=>{
+    $('breathDrawer').classList.toggle('open');
+  });
+
+  $$('.breath-pattern-btn').forEach(b=>{b.addEventListener('click',()=>{
+    if(bRunning)return;
+    $$('.breath-pattern-btn').forEach(x=>{x.classList.remove('active');x.style.removeProperty('--pat-color');});
+    b.classList.add('active');
+    cPat=b.dataset.pattern;
+    const p=PAT[cPat];
+    if(p)b.style.setProperty('--pat-color',p.hex);
+    // Show/hide apnea config
+    $('apneaConfig').classList.toggle('show',cPat==='apnea');
+    if(cPat==='apnea')renderApneaPreview();
+    updateAllTimes();
+    updateBreathSummary();
+    // Close drawer after selection (unless apnea which needs config)
+    if(cPat!=='apnea')$('breathDrawer').classList.remove('open');
+  });});
+  // Set initial color
+  const initBtn=document.querySelector('.breath-pattern-btn.active');
+  if(initBtn&&PAT[cPat])initBtn.style.setProperty('--pat-color',PAT[cPat].hex);
+
+  // Single tap on circle to start/stop
+  $('breathScene').addEventListener('click',(e)=>{
+    if(inApneaHold)return;
+    if(bRunning)stopB();else startB();
+  });
+
+  // Keyboard shortcuts (desktop)
+  document.addEventListener('keydown',(e)=>{
+    if(!$('sec-breathe').classList.contains('active'))return;
+    if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+    if(e.code==='Space'){e.preventDefault();if(inApneaHold)return;if(bRunning)stopB();else startB();}
+    if(e.code==='Escape'&&bRunning){e.preventDefault();stopB();}
+    const patKeys=['observe','box','478','coherent','bellows','physiological','apnea'];
+    const num=parseInt(e.key);
+    if(num>=1&&num<=7&&!bRunning){const btn=document.querySelector(`.breath-pattern-btn[data-pattern="${patKeys[num-1]}"]`);if(btn)btn.click();}
+  });
+
+  initCosmicParticles();
+  $('cosmicCanvas').style.display='none';
+
+  // Apnea config
+  initApnea();
+
+  // Practice guide toggle
+  $('breathGuideToggle').addEventListener('click',()=>{
+    const g=$('breathGuide');
+    g.classList.toggle('open');
+    $('breathGuideToggle').textContent=g.classList.contains('open')?'Close guide':'Practice guide';
+  });
+}
+
+function startB(){
+  const pat=PAT[cPat];if(!pat)return;
+  bRunning=true;
+  $('tapHint').textContent='tap to stop';
+
+  if(cPat==='observe'){
+    $('breathProgress').innerHTML='';
+    const t0=Date.now();let logged=false;
+    const modeColor=pat.hex||'#7A7668';
+    const ci=$('breathCircle'),ph=$('breathPhase'),cd=$('breathCountdown'),info=$('breathInfo');
+    ph.textContent='Observe';cd.textContent='';
+    ci.style.borderColor=modeColor;
+    ci.style.transitionDuration='2s';
+
+    // Start gentle visual on canvas
+    const canvas=$('cosmicCanvas');canvas.style.display='block';
+    initCosmicParticles();
+    let obsAnim=null;
+    function drawObserve(){
+      obsAnim=requestAnimationFrame(drawObserve);
+      const ctx=canvas.getContext('2d');const w=canvas.width,h=canvas.height,cx=w/2,cy=h/2;
+      ctx.clearRect(0,0,w,h);
+      const t=(Date.now()-t0)/1000;
+      cosmicParticles.forEach((p,i)=>{
+        p.angle+=p.speed*0.004;
+        // Gentle drift, no in/out — just floating
+        const drift=Math.sin(t*0.15+i*0.5)*8;
+        const d=p.baseDist+drift;
+        const x=cx+Math.cos(p.angle)*d;
+        const y=cy+Math.sin(p.angle)*d;
+        const alpha=p.alpha*0.35*(0.7+0.3*Math.sin(t*0.3+i));
+        ctx.beginPath();ctx.arc(x,y,p.size*0.8,0,Math.PI*2);
+        ctx.fillStyle=`rgba(180,175,160,${alpha})`;ctx.fill();
+      });
+    }
+    drawObserve();
+
+    // Ambient audio: quiet drone with occasional piano-like tones
+    const voice=$('breathVoice').value;
+    let audioInterval=null;
+    if(voice!=='silent'){
+      const c=ac();
+      // Soft bed
+      function playObserveBed(){
+        const now=c.currentTime,end=now+12;
+        const o1=c.createOscillator(),o2=c.createOscillator(),g=c.createGain();
+        o1.type='sine';o1.frequency.value=85;
+        o2.type='sine';o2.frequency.value=85.3;
+        g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.018,now+2);
+        g.gain.setValueAtTime(0.018,end-2);g.gain.linearRampToValueAtTime(0,end);
+        o1.connect(g);o2.connect(g);g.connect(c.destination);
+        o1.start(now);o1.stop(end+0.1);o2.start(now);o2.stop(end+0.1);
+        trackNode(o1,o2,g);
+      }
+      // Piano-like tone
+      function playObserveNote(){
+        const notes=[261.6,293.7,329.6,392,440,523.3]; // C D E G A C5
+        const freq=notes[Math.floor(Math.random()*notes.length)];
+        const now=c.currentTime,end=now+4;
+        const o=c.createOscillator(),g=c.createGain();
+        o.type='sine';o.frequency.value=freq;
+        g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.025,now+0.02);
+        g.gain.exponentialRampToValueAtTime(0.001,end);
+        o.connect(g);g.connect(c.destination);o.start(now);o.stop(end+0.1);
+        trackNode(o,g);
+      }
+      playObserveBed();
+      audioInterval=setInterval(()=>{
+        if(Math.random()<0.3)playObserveNote();
+        if(Math.random()<0.15)playObserveBed();
+      },4000);
+    }
+
+    const ctrl=new AbortController();bAbort=ctrl;
+    const tmr=setInterval(()=>{
+      if(ctrl.signal.aborted){clearInterval(tmr);return;}
+      const el=Math.floor((Date.now()-t0)/1000),m=Math.floor(el/60),s=el%60;
+      if(el>=60)logged=true;
+      info.textContent=m+':'+String(s).padStart(2,'0');
+    },250);
+
+    const check=setInterval(()=>{
+      if(ctrl.signal.aborted){
+        clearInterval(tmr);clearInterval(check);
+        if(audioInterval)clearInterval(audioInterval);
+        if(obsAnim)cancelAnimationFrame(obsAnim);
+        const ctx2=canvas.getContext('2d');ctx2.clearRect(0,0,canvas.width,canvas.height);canvas.style.display='none';
+        const totalElapsed=Math.floor((Date.now()-t0)/1000);
+        if(totalElapsed>=60){
+          const prev=gE(selDate);const prevMin=(prev.breathMin||0);
+          pE(selDate,{breathed:1,breathMin:prevMin+Math.round(totalElapsed/60),breathMode:'observe'});
+          showToast('Session logged');
+        } else {
+          showToast('Session complete');
+        }
+      }
+    },200);
+    return;
+  }
+
+  // Apnea mode
+  if(cPat==='apnea'){
+    $('breathProgress').innerHTML='';
+    const ctrl=new AbortController();bAbort=ctrl;
+    runApnea(ctrl.signal);
+    return;
+  }
+
+  const minutes=parseInt($('breathRounds').value)||2;
+  const rnds=roundsForMinutes(pat,minutes);
+  bRunning=true;
+  $('tapHint').textContent='tap to stop';
+
+  const prog=$('breathProgress');prog.innerHTML='';
+  for(let i=0;i<rnds;i++){const d=document.createElement('div');d.className='breath-dot';prog.appendChild(d);}
+
+  if(cPat==='coherent'){startCosmicLoop();}
+
+  const ctrl=new AbortController();bAbort=ctrl;
+  runB(pat,rnds,ctrl.signal);
+}
+
+function stopB(){
+  bRunning=false;if(bAbort)bAbort.abort();bAbort=null;
+  killSound();
+  stopCosmicLoop();
+  inApneaHold=false;
+  // Clear canvas (covers both coherent and observe)
+  const cvs=$('cosmicCanvas');
+  if(cvs){const ctx=cvs.getContext('2d');ctx.clearRect(0,0,cvs.width,cvs.height);cvs.style.display='none';}
+  $('tapHint').textContent='tap to begin';
+  $('breathPhase').textContent='Ready';$('breathCountdown').textContent='';$('breathInfo').textContent='';
+  const ci=$('breathCircle');ci.className='breath-circle';ci.style.transform='';ci.style.transitionDuration='';ci.style.borderColor='';ci.style.background='';ci.style.boxShadow='';
+  $('breathGlow').className='breath-glow';$('breathGlow').removeAttribute('style');
+  $('breathProgress').innerHTML='';
+}
+
+async function runB(pat,rnds,sig){
+  const ci=$('breathCircle'),ph=$('breathPhase'),cd=$('breathCountdown'),info=$('breathInfo'),glow=$('breathGlow'),dots=$('breathProgress').children,voice=$('breathVoice').value;
+  const t0=Date.now();let logged=false,curR=1;
+  const isCosmic=cPat==='coherent';
+  const modeColor=pat.hex||'#6B8C42';
+  const modeColorDim=modeColor+'22';
+
+  let totIn=0;pat.steps.forEach(([p,d])=>{if(p==='Inhale'||p==='Sip'||p==='Receive'||p==='In')totIn+=d;});
+  const isBellows=cPat==='bellows';
+  const maxS=isBellows?1.25:1.6,minS=1.0;let scale=minS;
+
+  const tmr=setInterval(()=>{const el=Math.floor((Date.now()-t0)/1000),m=Math.floor(el/60),s=el%60;if(el>=60)logged=true;info.textContent=`Round ${curR} of ${rnds}  \u00b7  ${m}:${String(s).padStart(2,'0')}`;},250);
+
+  try{
+    for(let c=0;c<rnds;c++){
+      if(sig.aborted)break;curR=c+1;if(dots[c])dots[c].classList.add('active');
+      for(const[pN,dur]of pat.steps){
+        if(sig.aborted)break;
+        const isIn=pN==='Inhale'||pN==='Sip'||pN==='Receive'||pN==='In';
+        const isEx=pN==='Exhale'||pN==='Release'||pN==='Out';
+        const isH=pN==='Hold'||pN==='Rest';
+
+        if(isBellows){
+          scale=isIn?maxS:minS;
+        } else {
+          if(isIn){scale=Math.min(maxS,scale+(maxS-minS)*(dur/(totIn||1)));}else if(isEx){scale=minS;}
+        }
+
+        ci.style.transitionDuration=dur+'s';ci.style.transform='scale('+scale+')';
+        ci.style.borderColor=isH?'var(--fg-faint)':modeColor;
+        ci.style.background=isH?'rgba(60,58,50,0.05)':modeColorDim;
+        ci.style.boxShadow=isIn?`0 0 60px ${modeColor}22`:(isEx?`0 0 40px ${modeColor}11`:'none');
+
+        glow.className='breath-glow';
+        glow.style.background=`radial-gradient(circle,${modeColor}22 0%,transparent 70%)`;
+        if(isIn)glow.classList.add('inhale');else if(isEx)glow.classList.add('exhale');
+        glow.style.transitionDuration=dur+'s';
+
+        ph.textContent=(pN==='In'||pN==='Out')?'Breathe':(pN==='Rest'?'Rest':pN);
+
+        if(isH)playHold(dur,voice);else playTone(pN,dur,voice);
+
+        const st=Date.now(),et=st+dur*1000;
+        while(Date.now()<et){
+          if(sig.aborted)break;
+          const elapsed=(Date.now()-st)/(dur*1000);
+          const r=Math.ceil((et-Date.now())/1000);
+          cd.textContent=r>0?r:'';
+          if(isCosmic){cosmicPhase=pN;cosmicProgress=Math.min(1,elapsed);}
+          await new Promise(r=>setTimeout(r,50));
+        }
+      }
+      if(dots[c]){dots[c].classList.remove('active');dots[c].classList.add('done');}
+      scale=minS;
+    }
+    if(!sig.aborted){
+      ph.textContent='Done';cd.textContent='';ci.className='breath-circle';ci.style.transitionDuration='0.8s';ci.style.transform='scale(1)';ci.style.borderColor='';ci.style.background='';ci.style.boxShadow='';
+      glow.className='breath-glow';glow.removeAttribute('style');
+      cosmicPhase='';cosmicProgress=0;
+      const totalElapsed=Math.floor((Date.now()-t0)/1000);
+      if(totalElapsed>=60)logged=true;
+      if(logged){const prev=gE(selDate);const prevMin=(prev.breathMin||0);pE(selDate,{breathed:1,breathMin:prevMin+Math.round(totalElapsed/60),breathMode:cPat});}
+      showToast(logged?'Session logged':'Session complete');
+      await new Promise(r=>setTimeout(r,2500));if(!sig.aborted)stopB();
+    }
+  }catch(e){}finally{clearInterval(tmr);}
+}
+
+// ═══ APNEA TRAINING ═══
+function initApnea(){
+  const sel=$('apneaMax');
+  // 30s to 6min in 15s increments
+  for(let s=30;s<=360;s+=15){
+    const o=document.createElement('option');
+    o.value=s;
+    const m=Math.floor(s/60),sec=s%60;
+    o.textContent=(m?m+'m ':'')+(sec?sec+'s':'');
+    sel.appendChild(o);
+  }
+  sel.value=120; // default 2 min
+  sel.addEventListener('change',renderApneaPreview);
+  $('apneaType').addEventListener('change',renderApneaPreview);
+  renderApneaPreview();
+}
+
+function generateApneaTable(){
+  const type=$('apneaType').value;
+  const maxHold=parseInt($('apneaMax').value)||120;
+  const rounds=8;
+  const table=[];
+
+  if(type==='co2'){
+    // Fixed hold at 50% max, rest shrinks from max*0.5 down to ~15s
+    const holdTime=Math.round(maxHold*0.5);
+    const startRest=Math.round(maxHold*0.5);
+    const endRest=15;
+    for(let i=0;i<rounds;i++){
+      const rest=Math.round(startRest-(startRest-endRest)*(i/(rounds-1)));
+      table.push({breathe:rest,hold:holdTime});
+    }
+  } else {
+    // Fixed rest, hold grows from 50% to ~85% max
+    const restTime=Math.round(maxHold*0.5);
+    const startHold=Math.round(maxHold*0.5);
+    const endHold=Math.round(maxHold*0.85);
+    for(let i=0;i<rounds;i++){
+      const hold=Math.round(startHold+(endHold-startHold)*(i/(rounds-1)));
+      table.push({breathe:restTime,hold:hold});
+    }
+  }
+  return table;
+}
+
+function renderApneaPreview(){
+  const table=generateApneaTable();
+  const prev=$('apneaPreview');
+  let totalSec=0;
+  let html='';
+  table.forEach((r,i)=>{
+    totalSec+=r.breathe+r.hold;
+    html+=`<div class="arow"><span>Round ${i+1}</span><span>Breathe ${fmtSec(r.breathe)} · Hold ${fmtSec(r.hold)}</span></div>`;
+  });
+  html+=`<div class="arow" style="color:var(--fg-mid);margin-top:4px"><span>Total</span><span>${fmtSec(totalSec)}</span></div>`;
+  prev.innerHTML=html;
+
+  // Update the time display on the button
+  const el=$('timeApnea');
+  if(el)el.textContent='8 rounds / '+fmtSec(totalSec);
+  updateBreathSummary();
+}
+
+async function runApnea(sig){
+  const table=generateApneaTable();
+  const ci=$('breathCircle'),ph=$('breathPhase'),cd=$('breathCountdown'),info=$('breathInfo');
+  const t0=Date.now();let logged=false;
+  const marine='#3D7A9E';
+  const marineDim='rgba(61,122,158,0.10)';
+  const holdColor='#2A6070';
+  const holdDim='rgba(42,96,112,0.08)';
+  const voice=$('breathVoice').value;
+
+  // --- Audio helper functions ---
+  function chime(freq,dur,vol){
+    if(voice==='silent')return;
+    const c=ac(),now=c.currentTime,end=now+dur;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sine';o.frequency.value=freq;
+    g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.015);
+    g.gain.exponentialRampToValueAtTime(0.001,end);
+    o.connect(g);g.connect(c.destination);o.start(now);o.stop(end+0.05);
+    trackNode(o,g);
+  }
+
+  function startHoldAmbient(){
+    // Quiet oceanic bed during hold
+    if(voice==='silent')return null;
+    const c=ac(),now=c.currentTime;
+    const len=300*c.sampleRate; // 5 min buffer
+    const buf=c.createBuffer(1,len,c.sampleRate);
+    const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+    const src=c.createBufferSource();src.buffer=buf;src.loop=true;
+    const flt=c.createBiquadFilter();flt.type='lowpass';flt.frequency.value=300;flt.Q.value=0.5;
+    const g=c.createGain();g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.035,now+2);
+    src.connect(flt);flt.connect(g);g.connect(c.destination);
+    src.start(now);trackNode(src,flt,g);
+    return g; // return gain for fadeout
+  }
+
+  function stopHoldAmbient(gainNode){
+    if(!gainNode)return;
+    try{
+      const c=ac();
+      gainNode.gain.linearRampToValueAtTime(0,c.currentTime+0.5);
+    }catch(e){}
+  }
+
+  function breatheRhythm(dur){
+    // Gentle rhythmic guide during breathe phase: slow oscillating tone
+    if(voice==='silent')return;
+    const c=ac(),now=c.currentTime,end=now+dur;
+    // Two detuned low tones for warmth
+    const o1=c.createOscillator(),o2=c.createOscillator(),g=c.createGain();
+    o1.type='sine';o1.frequency.value=120;
+    o2.type='sine';o2.frequency.value=120.4;
+    g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.025,now+1);
+    g.gain.setValueAtTime(0.025,end-1);g.gain.linearRampToValueAtTime(0,end);
+    o1.connect(g);o2.connect(g);g.connect(c.destination);
+    o1.start(now);o1.stop(end+0.05);o2.start(now);o2.stop(end+0.05);
+    trackNode(o1,o2,g);
+  }
+
+  // Progress dots
+  const prog=$('breathProgress');prog.innerHTML='';
+  for(let i=0;i<table.length;i++){const d=document.createElement('div');d.className='breath-dot';prog.appendChild(d);}
+  const dots=prog.children;
+
+  const tmr=setInterval(()=>{
+    const el=Math.floor((Date.now()-t0)/1000);
+    if(el>=60)logged=true;
+  },500);
+
+  let holdResolve=null;
+  function tapHandler(){if(holdResolve)holdResolve();}
+
+  try{
+    for(let r=0;r<table.length;r++){
+      if(sig.aborted)break;
+      const round=table[r];
+      if(dots[r])dots[r].classList.add('active');
+
+      // --- Round start chime ---
+      chime(523.3, 1.5, 0.03); // C5, gentle
+
+      // --- Breathe phase ---
+      ci.style.transitionDuration='1s';
+      ci.style.borderColor=marine;
+      ci.style.background=marineDim;
+      ph.textContent='Breathe';
+      // Show instruction on first round, just label after
+      if(r===0) $('tapHint').textContent='slow, calm belly breaths through the nose';
+      else $('tapHint').textContent='';
+      info.textContent=`Round ${r+1} of ${table.length}`;
+
+      breatheRhythm(round.breathe);
+
+      const bSt=Date.now(),bEnd=bSt+round.breathe*1000;
+      while(Date.now()<bEnd){
+        if(sig.aborted)break;
+        const rem=Math.ceil((bEnd-Date.now())/1000);
+        cd.textContent=rem>0?rem:'';
+        // 3-second warning chime
+        if(rem===3)chime(440, 0.8, 0.025);
+        await new Promise(r=>setTimeout(r,200));
+      }
+
+      if(sig.aborted)break;
+
+      // --- Hold begin tone ---
+      chime(330, 2.0, 0.035); // E4 — clear "begin" signal
+
+      // --- Hold phase ---
+      ci.style.transitionDuration='0.5s';
+      ci.style.borderColor=holdColor;
+      ci.style.background=holdDim;
+      ph.textContent='Hold';
+      inApneaHold=true;
+      $('tapHint').textContent='tap to release';
+
+      const ambientGain=startHoldAmbient();
+
+      const holdSt=Date.now();
+      const holdTarget=round.hold;
+
+      const tapPromise=new Promise(resolve=>{
+        holdResolve=resolve;
+        $('breathScene').addEventListener('click',tapHandler,{once:true});
+      });
+
+      const holdTmr=setInterval(()=>{
+        if(sig.aborted){clearInterval(holdTmr);return;}
+        const held=Math.floor((Date.now()-holdSt)/1000);
+        cd.textContent=fmtSec(held)+' / '+fmtSec(holdTarget);
+      },100);
+
+      await Promise.race([
+        tapPromise,
+        new Promise(resolve=>{
+          const c=setInterval(()=>{if(sig.aborted){clearInterval(c);resolve();}},100);
+        })
+      ]);
+
+      clearInterval(holdTmr);
+      holdResolve=null;
+      inApneaHold=false;
+      $('tapHint').textContent='tap to stop';
+      $('breathScene').removeEventListener('click',tapHandler);
+
+      // --- Hold release tone ---
+      stopHoldAmbient(ambientGain);
+      chime(392, 1.2, 0.03); // G4 — descending release
+      chime(330, 1.8, 0.02); // E4
+
+      if(dots[r]){dots[r].classList.remove('active');dots[r].classList.add('done');}
+    }
+
+    if(!sig.aborted){
+      // --- Session complete ---
+      chime(523.3, 2.0, 0.035);
+      chime(659.3, 2.5, 0.025); // C5 + E5 — completion
+
+      ph.textContent='Done';cd.textContent='';
+      ci.style.borderColor='';ci.style.background='';
+      const totalElapsed=Math.floor((Date.now()-t0)/1000);
+      if(totalElapsed>=60)logged=true;
+      if(logged){const prev=gE(selDate);const prevMin=(prev.breathMin||0);pE(selDate,{breathed:1,breathMin:prevMin+Math.round(totalElapsed/60),breathMode:'apnea'});}
+      info.textContent='';
+      showToast(logged?'Session logged':'Session complete');
+      await new Promise(r=>setTimeout(r,2500));
+      if(!sig.aborted)stopB();
+    }
+  }catch(e){}finally{
+    clearInterval(tmr);
+    holdResolve=null;
+    killSound();
+  }
+}
+
+// ═══ LOG ═══
+function renderGround(){const e=gE(selDate);$$('#sec-ground .toggle').forEach(el=>el.classList.toggle('on',e[el.dataset.key]===1));$('inWeight').value=e.weight||'';}
+function initGround(){
+  $$('#sec-ground .toggle').forEach(el=>{el.addEventListener('click',()=>{const k=el.dataset.key,c=gE(selDate),nv=c[k]===1?0:1;pE(selDate,{[k]:nv});el.classList.toggle('on',nv===1);});});
+  $$('#sec-ground .ground-item[data-key]').forEach(row=>{row.addEventListener('click',(e)=>{if(e.target.closest('.toggle')||e.target.closest('input'))return;const t=row.querySelector('.toggle');if(t)t.click();});});
+  $('inWeight').addEventListener('blur',(e)=>{const v=parseFloat(e.target.value);pE(selDate,{weight:isNaN(v)?null:v});});
+}
+
+// ═══ REFLECT ═══
+function renderReflect(){
+  const e=gE(selDate);
+  const qk=chooseLens(selDate);
+  const prompt=selectPrompt(qk,selDate,'evening');
+  $('reflectPrompt').textContent=prompt;
+  $('reflectText').value=e.note||'';
+  $('reflectSaved').textContent=e.note?'Saved':'';
+  $$('#energyRow .energy-btn').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.val)===e.energy));
+  $$('#attuneRow .attune-btn').forEach(b=>{b.classList.remove('active-attuned','active-chasing');if(b.dataset.val===e.attune)b.classList.add(e.attune==='attuned'?'active-attuned':'active-chasing');});
+
+  // Closing line — appears when at least one toggle is on AND a note is written
+  const closing=$('reflectClosing');
+  const hasToggle=ALL.some(k=>e[k]===1);
+  const hasNote=e.note&&e.note.trim().length>0;
+  if(hasToggle&&hasNote){
+    const q=QUALITIES[qk];
+    if(q&&q.closing){
+      const idx=Math.abs(hash(selDate+qk+'close'))%q.closing.length;
+      closing.textContent=q.closing[idx];
+    } else {
+      closing.textContent='';
+    }
+  } else {
+    closing.textContent='';
+  }
+}
+function initReflect(){
+  $('reflectText').addEventListener('blur',(e)=>{pE(selDate,{note:e.target.value});$('reflectSaved').textContent=e.target.value.trim()?'Saved':'';renderReflect();});
+  $$('#energyRow .energy-btn').forEach(btn=>{btn.addEventListener('click',()=>{const v=parseInt(btn.dataset.val),c=gE(selDate),nv=c.energy===v?null:v;pE(selDate,{energy:nv});$$('#energyRow .energy-btn').forEach(b=>b.classList.remove('active'));if(nv)btn.classList.add('active');});});
+  $$('#attuneRow .attune-btn').forEach(btn=>{btn.addEventListener('click',()=>{const v=btn.dataset.val,c=gE(selDate),nv=c.attune===v?null:v;pE(selDate,{attune:nv});$$('#attuneRow .attune-btn').forEach(b=>b.classList.remove('active-attuned','active-chasing'));if(nv)btn.classList.add(nv==='attuned'?'active-attuned':'active-chasing');});});
+}
+
+// ═══ RHYTHM ═══
+function mkRing(bP,mP,sP,size){
+  size=size||44;const cx=size/2,cy=size/2;
+  const rings=[
+    {pct:sP,r:size*0.227,c:'var(--c-spirit)',w:size*0.08},
+    {pct:mP,r:size*0.341,c:'var(--c-mind)',w:size*0.08},
+    {pct:bP,r:size*0.454,c:'var(--c-body)',w:size*0.08}
+  ];
+  let svg='';
+  for(const r of rings){
+    const ci=2*Math.PI*r.r;
+    svg+=`<circle cx="${cx}" cy="${cy}" r="${r.r}" fill="none" stroke="${r.c}" stroke-opacity="0.15" stroke-width="${r.w}"/>`;
+    if(r.pct>0)svg+=`<circle cx="${cx}" cy="${cy}" r="${r.r}" fill="none" stroke="${r.c}" stroke-width="${r.w}" stroke-linecap="round" stroke-dasharray="${ci*Math.min(r.pct,1)} ${ci}" transform="rotate(-90 ${cx} ${cy})"/>`;
+  }
+  return svg;
+}
+
+// ═══ WEEKLY REFLECTION ENGINE ═══
+// Reads the shape of a week and returns one sentence of meaning.
+// Not praise or punishment. Honest noticing.
+function readWeek(weekStart, daysLogged, bodyTotal, mindTotal, spiritTotal){
+  if(daysLogged===0) return '';
+  if(daysLogged===1) return 'One day logged. That day existed. Begin from there.';
+
+  const bAvg=bodyTotal/daysLogged, mAvg=mindTotal/daysLogged, sAvg=spiritTotal/daysLogged;
+  const bPct=bAvg/MB, mPct=mAvg/MM, sPct=sAvg/MS;
+  const totalAvg=(bodyTotal+mindTotal+spiritTotal)/daysLogged;
+  const totalPct=totalAvg/(MB+MM+MS);
+
+  // Gather per-day details for trajectory and individual habit patterns
+  const days=[];
+  for(let i=0;i<7;i++){
+    const d=addD(weekStart,i);
+    const e=gE(d);
+    const has=dHas(d);
+    days.push({
+      date:d, has,
+      body:sK(BODY,d), mind:sK(MIND,d), spirit:sK(SPIRIT,d),
+      total:dS(d),
+      energy:e.energy||0, attune:e.attune||'',
+      observed:e.observed===1, connected:e.connected===1,
+      meditated:e.meditated===1, learned:e.learned===1,
+      moved:e.moved===1, nourished:e.nourished===1,
+      alcoholFree:e.alcoholFree===1, sleptWell:e.sleptWell===1,
+      breathed:e.breathed===1
+    });
+  }
+
+  const logged=days.filter(d=>d.has);
+
+  // Trajectory: is the week building or fading?
+  const first=logged.slice(0,Math.ceil(logged.length/2));
+  const second=logged.slice(Math.ceil(logged.length/2));
+  const firstAvg=first.reduce((a,d)=>a+d.total,0)/(first.length||1);
+  const secondAvg=second.reduce((a,d)=>a+d.total,0)/(second.length||1);
+  const rising=secondAvg>firstAvg+0.5;
+  const falling=firstAvg>secondAvg+0.5;
+
+  // Individual habit frequencies across logged days
+  const obsCount=logged.filter(d=>d.observed).length;
+  const playCount=logged.filter(d=>d.connected).length;
+  const stillCount=logged.filter(d=>d.meditated).length;
+  const learnCount=logged.filter(d=>d.learned).length;
+  const moveCount=logged.filter(d=>d.moved).length;
+  const breathCount=logged.filter(d=>d.breathed).length;
+  const clearCount=logged.filter(d=>d.alcoholFree).length;
+
+  // Energy trajectory
+  const energyDays=logged.filter(d=>d.energy>0);
+  const avgEnergy=energyDays.length?energyDays.reduce((a,d)=>a+d.energy,0)/energyDays.length:0;
+  const attunedDays=logged.filter(d=>d.attune==='attuned').length;
+  const chasingDays=logged.filter(d=>d.attune==='chasing').length;
+
+  // Candidate reflections — weighted by relevance. Pick the most truthful.
+  const candidates=[];
+
+  // === Full presence ===
+  if(totalPct>=0.85 && daysLogged>=5)
+    candidates.push({w:10,t:'A full week. The rings remember what you gave them.'});
+  if(totalPct>=0.85 && daysLogged===7)
+    candidates.push({w:12,t:'Seven days, all three rings closing. Rare and real.'});
+
+  // === Category imbalance — the most useful insight ===
+  if(bPct>=0.7 && sPct<0.3)
+    candidates.push({w:9,t:'The body was tended. Spirit is asking to be noticed too.'});
+  if(sPct>=0.7 && bPct<0.3)
+    candidates.push({w:9,t:'Reverence and observation stayed alive. The body wants its turn.'});
+  if(mPct>=0.7 && sPct<0.3 && bPct<0.3)
+    candidates.push({w:9,t:'The mind was active. Bring the body and the living world in closer.'});
+  if(bPct>=0.6 && mPct>=0.6 && sPct<0.25)
+    candidates.push({w:10,t:'Body and mind were steady. The spirit ring — observation, play — wants more room.'});
+  if(sPct>=0.6 && mPct>=0.6 && bPct<0.25)
+    candidates.push({w:9,t:'Mind and spirit were present. The body is waiting patiently.'});
+
+  // === Specific habit patterns ===
+  if(obsCount>=daysLogged*0.7 && daysLogged>=3)
+    candidates.push({w:8,t:'Observation stayed alive this week. The practice of noticing is becoming a way of seeing.'});
+  if(obsCount===0 && daysLogged>=3)
+    candidates.push({w:7,t:'No observations logged. Step outside. One species. That\'s enough.'});
+  if(playCount>=daysLogged*0.7 && daysLogged>=3)
+    candidates.push({w:8,t:'Play kept showing up. Something is loosening.'});
+  if(playCount===0 && daysLogged>=3)
+    candidates.push({w:7,t:'Play didn\'t find its way in. It doesn\'t need a reason — just a door.'});
+  if(stillCount>=daysLogged*0.7 && daysLogged>=3)
+    candidates.push({w:7,t:'Stillness held ground this week. That quiet is doing more than it seems.'});
+  if(stillCount===0 && daysLogged>=4)
+    candidates.push({w:6,t:'No stillness this week. Even a pause between two thoughts counts.'});
+  if(breathCount>=daysLogged*0.5 && daysLogged>=3)
+    candidates.push({w:7,t:'The breath practice is becoming a thread through the days.'});
+  if(clearCount===daysLogged && daysLogged>=5)
+    candidates.push({w:6,t:'A clear week. The vessel was honoured.'});
+
+  // === Trajectory ===
+  if(rising && daysLogged>=4)
+    candidates.push({w:8,t:'The week built momentum. Something is waking up.'});
+  if(falling && daysLogged>=4)
+    candidates.push({w:7,t:'The week began strong and softened. That\'s not failure — it\'s information.'});
+
+  // === Energy and attunement ===
+  if(avgEnergy>=4 && daysLogged>=3)
+    candidates.push({w:6,t:'Energy ran bright this week. Notice what fed it.'});
+  if(avgEnergy>0 && avgEnergy<=2 && energyDays.length>=3)
+    candidates.push({w:7,t:'Energy was low. Tend to what\'s underneath — rest, nourishment, gentleness.'});
+  if(attunedDays>chasingDays && attunedDays>=3)
+    candidates.push({w:6,t:'More days attuned than chasing. The current was with you.'});
+  if(chasingDays>attunedDays && chasingDays>=3)
+    candidates.push({w:7,t:'More chasing than attunement. What would it mean to stop reaching?'});
+
+  // === Observation + low energy (the insight from Lily's example) ===
+  if(obsCount>=2 && avgEnergy>0 && avgEnergy<=2.5 && energyDays.length>=2)
+    candidates.push({w:9,t:'Observation stayed alive even when energy dipped. That\'s devotion, not discipline.'});
+
+  // === Play + stillness gap ===
+  if(playCount<=1 && stillCount<=1 && daysLogged>=4)
+    candidates.push({w:8,t:'Play and stillness want more room next week.'});
+
+  // === Sparse logging ===
+  if(daysLogged===2)
+    candidates.push({w:5,t:'Two days. That\'s two days more than none. The practice survives.'});
+  if(daysLogged===3)
+    candidates.push({w:4,t:'Three days logged. Not every day needs to be captured — but showing up matters.'});
+
+  // === Deep engagement ===
+  if(totalPct>=0.6 && obsCount>=2 && playCount>=2 && stillCount>=2)
+    candidates.push({w:11,t:'Curiosity, play, and stillness all found their way in. This is what creative aliveness looks like in the data.'});
+
+  // === Fallback ===
+  if(candidates.length===0)
+    return daysLogged>=3 ? 'The week had its shape. Look at what stayed.' : '';
+
+  // Pick highest-weighted candidate; break ties by hash for determinism
+  candidates.sort((a,b)=>{
+    if(b.w!==a.w) return b.w-a.w;
+    return hash(weekStart+a.t) - hash(weekStart+b.t);
+  });
+
+  return candidates[0].t;
+}
+
+function renderRhythm(){
+  const ws=rwStart,we=addD(ws,6);$('rhythmWeekLabel').textContent=fmtShort(ws)+' \u2013 '+fmtShort(we);
+  const grid=$('rhythmGrid');grid.innerHTML='';
+  let tS=0,dL=0,tB=0,tM=0,tSp=0;
+  for(let i=0;i<7;i++){
+    const d=addD(ws,i),isT=d===isoToday(),isSel=d===selDate;
+    const bS=sK(BODY,d),mS=sK(MIND,d),sS=sK(SPIRIT,d);
+    if(dHas(d)){dL++;tS+=dS(d);tB+=bS;tM+=mS;tSp+=sS;}
+    const col=document.createElement('div');col.className='rhythm-day-col'+(isT?' today':'')+(isSel?' selected':'');
+    col.innerHTML=`<div class="rhythm-dow">${dow2(d)}</div><div class="rhythm-dom">${dom(d)}</div><svg class="rhythm-ring-svg" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">${mkRing(MB?bS/MB:0,MM?mS/MM:0,MS?sS/MS:0,44)}</svg>`;
+    col.addEventListener('click',()=>{selDate=d;renderAll();});grid.appendChild(col);
+  }
+  const sm=$('rhythmSummary');
+  sm.innerHTML=`<div class="rhythm-stat-row"><span class="rhythm-stat-label">Days logged</span><span class="rhythm-stat-value">${dL} / 7</span></div><div class="rhythm-stat-row"><span class="rhythm-stat-label">Body</span><span class="rhythm-stat-value" style="color:var(--c-body)">${dL?(tB/dL).toFixed(1):'\u2014'} / ${MB}</span></div><div class="rhythm-stat-row"><span class="rhythm-stat-label">Mind</span><span class="rhythm-stat-value" style="color:var(--c-mind)">${dL?(tM/dL).toFixed(1):'\u2014'} / ${MM}</span></div><div class="rhythm-stat-row"><span class="rhythm-stat-label">Spirit</span><span class="rhythm-stat-value" style="color:var(--c-spirit)">${dL?(tSp/dL).toFixed(1):'\u2014'} / ${MS}</span></div><div class="rhythm-stat-row"><span class="rhythm-stat-label">Week total</span><span class="rhythm-stat-value">${tS}</span></div>`;
+
+  // Weekly interpretive reflection
+  $('rhythmReflection').textContent = readWeek(ws, dL, tB, tM, tSp);
+
+  renderMonth();
+}
+
+function renderMonth(){
+  const now=new Date();now.setMonth(now.getMonth()+monthOffset);
+  const y=now.getFullYear(),m=now.getMonth();
+  const mNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  $('monthLabel').textContent=mNames[m]+' '+y;
+  const firstDay=new Date(y,m,1).getDay();const offset=(firstDay+6)%7;
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const grid=$('monthGrid');grid.innerHTML='';
+  const todayISO=isoToday();
+  for(let i=0;i<offset;i++){const c=document.createElement('div');c.className='month-cell empty';grid.appendChild(c);}
+  for(let d=1;d<=daysInMonth;d++){
+    const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const bS=sK(BODY,iso),mS=sK(MIND,iso),sS=sK(SPIRIT,iso);
+    const bP=MB?bS/MB:0,mP=MM?mS/MM:0,sP=MS?sS/MS:0;
+    const cell=document.createElement('div');cell.className='month-cell'+(iso===todayISO?' today':'');
+    cell.innerHTML=`<span class="mc-num">${d}</span><svg class="mini-ring" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">${mkRing(bP,mP,sP,38)}</svg>`;
+    cell.addEventListener('click',()=>{selDate=iso;rwStart=weekMon(iso);renderAll();});
+    grid.appendChild(cell);
+  }
+}
+
+function initRhythm(){
+  $('rhythmPrev').addEventListener('click',()=>{rwStart=addD(rwStart,-7);renderRhythm();});
+  $('rhythmNext').addEventListener('click',()=>{rwStart=addD(rwStart,7);renderRhythm();});
+  $('monthPrev').addEventListener('click',()=>{monthOffset--;renderMonth();});
+  $('monthNext').addEventListener('click',()=>{monthOffset++;renderMonth();});
+}
+
+// ═══ INSIGHTS ═══
+function renderInsights(){
+  const wrap=$('insightsWrap');
+  const dates=Object.keys(store.entries).sort();
+  if(!dates.length){wrap.innerHTML='<div style="font-size:0.82rem;color:var(--fg-faint);padding:4px 0">Start logging to see insights here.</div>';return;}
+
+  let html='';
+
+  // Breathing practice
+  const breathDates=dates.filter(d=>store.entries[d]&&store.entries[d].breathed===1);
+  if(breathDates.length>0){
+    const now=new Date(),curY=now.getFullYear(),curM=now.getMonth();
+    const thisMonth=breathDates.filter(d=>{const p=d.split('-');return parseInt(p[0])===curY&&parseInt(p[1])-1===curM;}).length;
+    const daysInMonth=new Date(curY,curM+1,0).getDate();
+    let totalMin=0;
+    dates.forEach(d=>{const e=store.entries[d];if(e&&e.breathMin)totalMin+=e.breathMin;});
+    let monthMin=0;
+    dates.forEach(d=>{const p=d.split('-');if(parseInt(p[0])===curY&&parseInt(p[1])-1===curM){const e=store.entries[d];if(e&&e.breathMin)monthMin+=e.breathMin;}});
+    html+=`<div class="insight-card"><div class="insight-title">Breathing practice</div>`;
+    html+=`<div class="insight-row"><span class="insight-label">This month</span><span class="insight-value">${thisMonth} days · ${monthMin} min</span></div>`;
+    html+=`<div class="insight-row"><span class="insight-label">All time</span><span class="insight-value">${breathDates.length} days · ${totalMin} min</span></div>`;
+    html+=`</div>`;
+  }
+
+  // Weight sparkline
+  const wDates=dates.filter(d=>store.entries[d]&&store.entries[d].weight!=null);
+  if(wDates.length>=1){
+    const last=wDates.slice(-30);const vals=last.map(d=>store.entries[d].weight);
+    const min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
+    const latest=vals[vals.length-1];
+    let trend='';
+    if(vals.length>=7){const recent=vals.slice(-7),prev=vals.slice(-14,-7);if(prev.length){const rAvg=recent.reduce((a,b)=>a+b,0)/recent.length,pAvg=prev.reduce((a,b)=>a+b,0)/prev.length;const diff=rAvg-pAvg;trend=diff>0.2?'↑ trending up':diff<-0.2?'↓ trending down':'→ stable';}}
+
+    html+=`<div class="insight-card"><div class="insight-title">Weight</div>`;
+    html+=`<div class="insight-row"><span class="insight-label">Latest</span><span class="insight-value">${latest.toFixed(1)} kg</span></div>`;
+    if(vals.length>1)html+=`<div class="insight-row"><span class="insight-label">Range</span><span class="insight-value">${min.toFixed(1)}–${max.toFixed(1)} kg</span></div>`;
+    if(trend)html+=`<div class="insight-row"><span class="insight-label">7-day</span><span class="insight-value">${trend}</span></div>`;
+    html+=`<div class="weight-spark">`;
+    last.forEach(d=>{const v=store.entries[d].weight;const pct=range?((v-min)/range)*100:50;html+=`<div class="weight-spark-bar" style="height:${Math.max(4,pct)}%"></div>`;});
+    html+=`</div></div>`;
+  }
+
+  // Energy distribution
+  const eCounts={1:0,2:0,3:0,4:0,5:0};let eTotal=0;
+  const eLabels={1:'Low',2:'Quiet',3:'Steady',4:'Bright',5:'Vivid'};
+  const eColors={1:'#7A7668',2:'#5A8BA5',3:'var(--accent)',4:'#8FB55A',5:'#C49A4A'};
+  dates.forEach(d=>{const e=store.entries[d];if(e&&e.energy>=1&&e.energy<=5){eCounts[e.energy]++;eTotal++;}});
+  if(eTotal>0){
+    html+=`<div class="insight-card"><div class="insight-title">Energy (${eTotal} days)</div>`;
+    for(let i=1;i<=5;i++){
+      const pct=eTotal?(eCounts[i]/eTotal*100):0;
+      html+=`<div class="insight-bar-row"><span class="insight-bar-label">${eLabels[i]}</span><div class="insight-bar"><div class="insight-bar-fill" style="width:${pct}%;background:${eColors[i]}"></div></div><span class="insight-bar-count">${eCounts[i]}</span></div>`;
+    }
+    html+=`</div>`;
+  }
+
+  // Attunement ratio
+  let attuned=0,chasing=0;
+  dates.forEach(d=>{const e=store.entries[d];if(e){if(e.attune==='attuned')attuned++;if(e.attune==='chasing')chasing++;}});
+  const aTotal=attuned+chasing;
+  if(aTotal>0){
+    const aPct=Math.round(attuned/aTotal*100);
+    html+=`<div class="insight-card"><div class="insight-title">Attunement (${aTotal} days)</div>`;
+    html+=`<div class="insight-bar-row"><span class="insight-bar-label">Attuned</span><div class="insight-bar"><div class="insight-bar-fill" style="width:${aPct}%;background:var(--c-body)"></div></div><span class="insight-bar-count">${attuned}</span></div>`;
+    html+=`<div class="insight-bar-row"><span class="insight-bar-label">Chasing</span><div class="insight-bar"><div class="insight-bar-fill" style="width:${100-aPct}%;background:var(--c-spirit)"></div></div><span class="insight-bar-count">${chasing}</span></div>`;
+    html+=`</div>`;
+  }
+
+  if(!html)html='<div style="font-size:0.82rem;color:var(--fg-faint);padding:4px 0">Start logging to see insights here.</div>';
+  wrap.innerHTML=html;
+}
+
+// ═══ SETTINGS ═══
+function initSettings(){
+  $('btnExportJSON').addEventListener('click',()=>{dl(new Blob([JSON.stringify(store,null,2)],{type:'application/json'}),`ground-backup-${isoToday()}.json`);showToast('JSON exported');});
+  $('btnExportCSV').addEventListener('click',()=>{
+    const dates=Object.keys(store.entries).sort();if(!dates.length){showToast('No data');return;}
+    const cols=['date',...ALL,'weight','energy','attune','breathed','breathMin','breathMode','note'];let csv=cols.join(',')+'\n';
+    for(const d of dates){const e=store.entries[d]||{};csv+=[d,...ALL.map(k=>e[k]===1?1:0),e.weight||'',e.energy||'',e.attune||'',e.breathed===1?1:0,e.breathMin||'',e.breathMode||'','"'+(e.note||'').replace(/"/g,'""')+'"'].join(',')+'\n';}
+    dl(new Blob([csv],{type:'text/csv'}),`ground-${isoToday()}.csv`);showToast('CSV exported');
+  });
+  $('btnImportJSON').addEventListener('click',()=>$('fileImportJSON').click());
+  $('fileImportJSON').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const imp=JSON.parse(await f.text());if(imp.schema===SC&&imp.entries){for(const[d,en]of Object.entries(imp.entries)){if(!store.entries[d])store.entries[d]=en;else Object.assign(store.entries[d],en);}saveS();renderAll();showToast('Imported & merged');}else showToast('Unrecognized format');}catch(er){showToast('Import failed');}e.target.value='';});
+  $('btnReset').addEventListener('click',()=>{if(confirm('Erase all Ground data? Cannot be undone.')){localStorage.removeItem(SK);store=loadS();renderAll();showToast('Data erased');}});
+}
+function dl(b,n){const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;a.click();URL.revokeObjectURL(u);}
+let tT;function showToast(m){const t=$('toast');t.textContent=m;t.classList.add('show');if(tT)clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2200);}
+
+function renderAll(){renderTop();renderLens();renderBreathLogged();renderGround();renderReflect();renderRhythm();}
+
+function renderBreathLogged(){
+  const e=gE(selDate);
+  if(e.breathed===1){
+    const min=e.breathMin||0;
+    $('breathLogged').textContent=min>0?`${min} min breathed today`:'Breathed today';
+  } else {
+    $('breathLogged').textContent='';
+  }
+}
+
+function init(){store=loadS();selDate=isoToday();rwStart=weekMon(isoToday());initNav();initBreathe();initGround();initReflect();initRhythm();initSettings();renderAll();}
+init();
+})();
+</script>
+</body>
+</html>
