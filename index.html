@@ -266,8 +266,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <!-- Collapsed: shows selected pattern, tap to expand -->
       <div class="breath-selected" id="breathSelected">
         <div class="breath-selected-inner">
-          <div class="breath-selected-name" id="breathSelName">Observe</div>
-          <div class="breath-selected-desc" id="breathSelDesc">Follow your breath without controlling it</div>
+          <div class="breath-selected-name" id="breathSelName">Relaxing breath</div>
+          <div class="breath-selected-desc" id="breathSelDesc">4–7–8 · deep calm</div>
         </div>
         <div class="breath-selected-time" id="breathSelTime">2 min</div>
       </div>
@@ -275,9 +275,9 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <!-- Expandable drawer -->
       <div class="breath-drawer" id="breathDrawer">
         <div class="breath-patterns" id="breathPatterns">
-          <div class="breath-pattern-btn active" data-pattern="observe"><div><div class="breath-pattern-name">Observe</div><div class="breath-pattern-desc">Follow your breath without controlling it</div></div><div class="breath-pattern-time" id="timeObserve"></div></div>
+          <div class="breath-pattern-btn" data-pattern="observe"><div><div class="breath-pattern-name">Observe</div><div class="breath-pattern-desc">Follow your breath without controlling it</div></div><div class="breath-pattern-time" id="timeObserve"></div></div>
           <div class="breath-pattern-btn" data-pattern="box"><div><div class="breath-pattern-name">Box breath</div><div class="breath-pattern-desc">4–4–4–4 · calm the nervous system</div></div><div class="breath-pattern-time" id="timeBox"></div></div>
-          <div class="breath-pattern-btn" data-pattern="478"><div><div class="breath-pattern-name">4-7-8</div><div class="breath-pattern-desc">4–7–8 · deep relaxation</div></div><div class="breath-pattern-time" id="time478"></div></div>
+          <div class="breath-pattern-btn active" data-pattern="478"><div><div class="breath-pattern-name">Relaxing breath</div><div class="breath-pattern-desc">4–7–8 · deep calm</div></div><div class="breath-pattern-time" id="time478"></div></div>
           <div class="breath-pattern-btn" data-pattern="coherent"><div><div class="breath-pattern-name">Coherent</div><div class="breath-pattern-desc">5.5 in, 5.5 out · the universe breathes you</div></div><div class="breath-pattern-time" id="timeCoherent"></div></div>
           <div class="breath-pattern-btn" data-pattern="bellows"><div><div class="breath-pattern-name">Bhastrika</div><div class="breath-pattern-desc">Rapid equal breaths · wake up the body</div></div><div class="breath-pattern-time" id="timeBellows"></div></div>
           <div class="breath-pattern-btn" data-pattern="physiological"><div><div class="breath-pattern-name">Physiological sigh</div><div class="breath-pattern-desc">Double inhale, long exhale · acute stress</div></div><div class="breath-pattern-time" id="timePhysiological"></div></div>
@@ -307,10 +307,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <div class="breath-guide" id="breathGuide">
         <p>Do breath-work with a straight spine, sitting or lying comfortably. Practise when you first wake, before bed, and as the need arises.</p>
         <p><strong>Observe</strong> — the most subtle and powerful practice. Follow your breath without trying to influence it. This is the essence of meditation. Start by noticing the exhale first; you will naturally deepen your breathing by increasing exhalation.</p>
-        <p><strong>4-7-8</strong> — the relaxing breath. Begin with 4 cycles, twice a day. Over weeks, build to 8 cycles, twice a day. Use when anxious, upset, or experiencing cravings.</p>
-        <p><strong>Bhastrika</strong> — the bellows breath, a stimulating exercise. Use to increase alertness when drowsy or to sharpen focus. Work up to one full minute.</p>
+        <p><strong>Relaxing breath</strong> — the 4-7-8 pattern. Place the tongue in the yogic position: touching the roof of the mouth, just behind the front teeth. Hold it there throughout. Begin with 4 cycles, twice a day. Over weeks, build to 8 cycles, twice a day. Use when anxious, upset, or experiencing cravings.</p>
+        <p><strong>Bhastrika</strong> — the bellows breath, a stimulating exercise. Place the tongue in the yogic position as above. Breathe in and out through the nose, deeply and with force, as fast as possible. Use to increase alertness when drowsy or to sharpen focus. Work up to one full minute.</p>
         <p><strong>Coherent</strong> — the surrender breath. Use when falling asleep or waking up. Lie down and feel yourself as the passive recipient of breath. As you inhale, the universe blows breath into you, expanding into every part of your body, even your fingers and toes. As you exhale, the universe withdraws air from you — you are not pushing it out, it is being gently taken.</p>
-        <p><strong>To prepare for meditation:</strong> Bhastrika for 1 minute, followed by 8 cycles of 4-7-8.</p>
+        <p><strong>To prepare for meditation:</strong> Bhastrika for 1 minute, followed by 8 cycles of the Relaxing breath.</p>
         <p><strong>When upset:</strong> Make your breath deeper, quieter, slower, and more regular. When agitated, breathing is rapid, shallow, irregular, and noisy. You cannot always tell yourself not to be upset, but you can control your breathing.</p>
         <p><strong>Apnea training</strong> — CO₂ tables hold your breath at a fixed time while shortening rest intervals, training CO₂ tolerance. O₂ tables keep rest fixed while lengthening hold time, training oxygen efficiency. Set your current max hold and the app generates 8 rounds. During the breathe phase, breathe slowly and calmly through the nose — belly rises on inhale, falls on exhale. No deep gulps, no fast breathing. Just tidal breath, as though you were about to fall asleep. A chime will warn you three seconds before the hold begins. Take one final full breath, then hold. Tap to release when you need to breathe. Always train lying down, never in water alone.</p>
         <p>Regularity matters more than intensity. Daily practice, over time, changes the function of the nervous system.</p>
@@ -424,7 +424,8 @@ const QUALITIES={
       "Where could life reveal itself in minute proportions?",
       "What would it mean to approach one creature with full attention?",
       "What is the yard, the sky, or the nearest tree offering today?",
-      "Before you do anything, arrive."
+      "Before you do anything, arrive.",
+      "Each life is on a trajectory. What does that make visible today?"
     ],
     evening:[
       "What living thing entered your notice today?",
@@ -448,7 +449,8 @@ const QUALITIES={
       "How might you become a source of vitality today?",
       "What kind of energy will you offer today?",
       "Where could aliveness enter through the body today?",
-      "What would it mean to move with intention, even briefly?"
+      "What would it mean to move with intention, even briefly?",
+      "How will you stop drinking from the bottle marked poison?"
     ],
     evening:[
       "What is true in your body today?",
@@ -479,7 +481,8 @@ const QUALITIES={
       "What made your heart sing?",
       "What did you take into your arms?",
       "What surprised you?",
-      "What loosened in you today?"
+      "What loosened in you today?",
+      "Where did real contact with life happen \u2014 not escape, not filling time, but actual living?"
     ],
     closing:[
       "Leave room for something unplanned.",
@@ -498,19 +501,23 @@ const QUALITIES={
       "What fear might try to author the day?",
       "What would you set down if you trusted the ground?",
       "How will you be kind to the animal of your body?",
-      "Before you do anything, arrive."
+      "Before you do anything, arrive.",
+      "What would it mean to be genuinely kind to yourself today?",
+      "What tenderness is hiding underneath the discomfort?"
     ],
     evening:[
       "What wanted gentleness?",
       "Where did you tighten against life?",
       "What fear tried to author the day?",
       "What can be set down now?",
-      "What are you grateful for?"
+      "What are you grateful for?",
+      "Where did your heart stay open when it wanted to close?"
     ],
     closing:[
       "You\u2019ve done enough. Go gently.",
       "Set it down. The ground will hold it.",
-      "Be as kind to yourself tonight as you would be to anyone you love."
+      "Be as kind to yourself tonight as you would be to anyone you love.",
+      "Shaky tenderness is where fearlessness comes from."
     ]
   },
   curiosity:{
@@ -522,7 +529,8 @@ const QUALITIES={
       "Where might art and science meet in the hours ahead?",
       "What question could you carry like a lantern today?",
       "What would you study if no one were watching?",
-      "What in the world deserves a second look today?"
+      "What in the world deserves a second look today?",
+      "What if you stayed inquisitive with whatever arises today \u2014 agreeable and disagreeable alike?"
     ],
     evening:[
       "What did you approach with genuine curiosity?",
@@ -543,10 +551,11 @@ const QUALITIES={
     signals:['learned','connected','observed'],
     morning:[
       "What will you do toward your intention today, however small?",
-      "Where is the tension between striving and being — and can you hold both?",
+      "Where is the tension between striving and being \u2014 and can you hold both?",
       "What might emerge today that you can\u2019t plan?",
       "What would creative aliveness look like in the next few hours?",
-      "How will you let life move through you today?"
+      "How will you let life move through you today?",
+      "What if your ordinary life today became material for awakening?"
     ],
     evening:[
       "What did you do toward your intention, however small?",
@@ -558,7 +567,8 @@ const QUALITIES={
     closing:[
       "Something was made today, even if only a moment of presence.",
       "Let the day compost. Tomorrow will grow from it.",
-      "You are the instrument. Rest now. The music continues."
+      "You are the instrument. Rest now. The music continues.",
+      "Let everything happen to you: beauty and terror. Just keep going."
     ]
   }
 };
@@ -631,7 +641,7 @@ function renderLens(){
   lens.innerHTML=`<div class="daily-lens-quality ${q.css}">${q.name}</div><div class="daily-lens-prompt">${prompt}</div>`;
 }
 
-let store,selDate,rwStart,bRunning=false,bAbort=null,cPat='observe',aCtx=null,monthOffset=0;
+let store,selDate,rwStart,bRunning=false,bAbort=null,cPat='478',aCtx=null,monthOffset=0;
 let activeNodes=[];
 let cosmicAnim=null;
 let cosmicParticles=[];
@@ -797,13 +807,57 @@ function playBellowsBurst(phase,dur,voice){
 
 function playHold(dur,voice){
   if(voice==='silent')return;
+  if(voice==='drone')playHoldDrone(dur);
+  else if(voice==='throat')playHoldThroat(dur);
+  else if(voice==='wind')playHoldWind(dur);
+}
+
+function playHoldDrone(dur){
   const c=ac(),now=c.currentTime,end=now+dur;
-  const o=c.createOscillator(),g=c.createGain();
-  o.type='sine';o.frequency.value=voice==='throat'?150:90;
-  g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.02,now+0.5);
-  g.gain.setValueAtTime(0.02,end-0.5);g.gain.linearRampToValueAtTime(0,end);
-  o.connect(g);g.connect(c.destination);o.start(now);o.stop(end+0.05);
-  trackNode(o,g);
+  // Sustained mid-range hum — steady, unchanging, says "stay here"
+  const o1=c.createOscillator(),o2=c.createOscillator(),g=c.createGain();
+  o1.type='sine';o1.frequency.value=130;
+  o2.type='sine';o2.frequency.value=130.6; // slight detuning for warmth
+  g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.025,now+0.8);
+  g.gain.setValueAtTime(0.025,end-0.6);g.gain.linearRampToValueAtTime(0,end);
+  o1.connect(g);o2.connect(g);g.connect(c.destination);
+  o1.start(now);o1.stop(end+0.05);o2.start(now);o2.stop(end+0.05);
+  trackNode(o1,o2,g);
+}
+
+function playHoldThroat(dur){
+  const c=ac(),now=c.currentTime,end=now+dur;
+  // Sustained low drone with fixed overtone — no sweep, pure stillness
+  const fund=95;
+  const master=c.createGain();
+  master.gain.setValueAtTime(0,now);master.gain.linearRampToValueAtTime(1,now+0.8);
+  master.gain.setValueAtTime(1,end-0.6);master.gain.linearRampToValueAtTime(0,end);
+  master.connect(c.destination);trackNode(master);
+
+  const harmonics=[1,3,5];
+  const vols=[0.035,0.02,0.012];
+  harmonics.forEach((h,i)=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.type=h===1?'sawtooth':'sine';
+    o.frequency.value=fund*h;
+    g.gain.value=vols[i];
+    o.connect(g);g.connect(master);o.start(now);o.stop(end+0.05);
+    trackNode(o,g);
+  });
+}
+
+function playHoldWind(dur){
+  const c=ac(),now=c.currentTime,end=now+dur;
+  // Steady low-frequency filtered noise — the sound of held breath
+  const len=Math.ceil(dur+1)*c.sampleRate;
+  const buf=c.createBuffer(1,len,c.sampleRate);
+  const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  const src=c.createBufferSource();src.buffer=buf;
+  const flt=c.createBiquadFilter();flt.type='lowpass';flt.frequency.value=400;flt.Q.value=0.5;
+  const g=c.createGain();g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.05,now+0.8);
+  g.gain.setValueAtTime(0.05,end-0.6);g.gain.linearRampToValueAtTime(0,end);
+  src.connect(flt);flt.connect(g);g.connect(c.destination);src.start(now);src.stop(end+0.05);
+  trackNode(src,flt,g);
 }
 
 // ═══ COSMIC CANVAS ═══
@@ -954,6 +1008,9 @@ function initBreathe(){
     $('breathDrawer').classList.toggle('open');
   });
 
+  // Preferred voice per pattern
+  const patVoice={observe:'drone','478':'drone',box:'drone',coherent:'throat',bellows:'wind',physiological:'drone',apnea:'silent'};
+
   $$('.breath-pattern-btn').forEach(b=>{b.addEventListener('click',()=>{
     if(bRunning)return;
     $$('.breath-pattern-btn').forEach(x=>{x.classList.remove('active');x.style.removeProperty('--pat-color');});
@@ -961,6 +1018,8 @@ function initBreathe(){
     cPat=b.dataset.pattern;
     const p=PAT[cPat];
     if(p)b.style.setProperty('--pat-color',p.hex);
+    // Set preferred voice for this pattern
+    if(patVoice[cPat])$('breathVoice').value=patVoice[cPat];
     // Show/hide apnea config
     $('apneaConfig').classList.toggle('show',cPat==='apnea');
     if(cPat==='apnea')renderApneaPreview();
