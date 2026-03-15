@@ -299,7 +299,6 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       </div>
 
       <div class="breath-progress" id="breathProgress"></div>
-      <div class="section-sub" style="margin-top:28px;margin-bottom:0;text-align:center">Before you do anything, arrive.</div>
       <div class="breath-guide-toggle" id="breathGuideToggle">Practice guide</div>
       <div class="breath-guide" id="breathGuide">
         <p>Do breath-work with a straight spine, sitting or lying comfortably. Practise when you first wake, before bed, and as the need arises.</p>
@@ -409,7 +408,8 @@ const QUALITIES={
       "What living thing might you notice if you slow down?",
       "Where could life reveal itself in minute proportions?",
       "What would it mean to approach one creature with full attention?",
-      "What is the yard, the sky, or the nearest tree offering today?"
+      "What is the yard, the sky, or the nearest tree offering today?",
+      "Before you do anything, arrive."
     ],
     evening:[
       "What living thing entered your notice today?",
@@ -482,7 +482,8 @@ const QUALITIES={
       "Where might you soften instead of push?",
       "What fear might try to author the day?",
       "What would you set down if you trusted the ground?",
-      "How will you be kind to the animal of your body?"
+      "How will you be kind to the animal of your body?",
+      "Before you do anything, arrive."
     ],
     evening:[
       "What wanted gentleness?",
@@ -1022,40 +1023,38 @@ function startB(){
     drawObserve();
 
     // Ambient audio: quiet drone with occasional piano-like tones
-    const voice=$('breathVoice').value;
     let audioInterval=null;
-    if(voice!=='silent'){
-      const c=ac();
-      // Soft bed
-      function playObserveBed(){
-        const now=c.currentTime,end=now+12;
-        const o1=c.createOscillator(),o2=c.createOscillator(),g=c.createGain();
-        o1.type='sine';o1.frequency.value=85;
-        o2.type='sine';o2.frequency.value=85.3;
-        g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.018,now+2);
-        g.gain.setValueAtTime(0.018,end-2);g.gain.linearRampToValueAtTime(0,end);
-        o1.connect(g);o2.connect(g);g.connect(c.destination);
-        o1.start(now);o1.stop(end+0.1);o2.start(now);o2.stop(end+0.1);
-        trackNode(o1,o2,g);
-      }
-      // Piano-like tone
-      function playObserveNote(){
-        const notes=[261.6,293.7,329.6,392,440,523.3]; // C D E G A C5
-        const freq=notes[Math.floor(Math.random()*notes.length)];
-        const now=c.currentTime,end=now+4;
-        const o=c.createOscillator(),g=c.createGain();
-        o.type='sine';o.frequency.value=freq;
-        g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.025,now+0.02);
-        g.gain.exponentialRampToValueAtTime(0.001,end);
-        o.connect(g);g.connect(c.destination);o.start(now);o.stop(end+0.1);
-        trackNode(o,g);
-      }
-      playObserveBed();
-      audioInterval=setInterval(()=>{
-        if(Math.random()<0.3)playObserveNote();
-        if(Math.random()<0.15)playObserveBed();
-      },4000);
+    const c2=ac();
+    function playObserveBed(){
+      const now=c2.currentTime,end=now+12;
+      const o1=c2.createOscillator(),o2=c2.createOscillator(),g=c2.createGain();
+      o1.type='sine';o1.frequency.value=85;
+      o2.type='sine';o2.frequency.value=85.3;
+      g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.018,now+2);
+      g.gain.setValueAtTime(0.018,end-2);g.gain.linearRampToValueAtTime(0,end);
+      o1.connect(g);o2.connect(g);g.connect(c2.destination);
+      o1.start(now);o1.stop(end+0.1);o2.start(now);o2.stop(end+0.1);
+      trackNode(o1,o2,g);
     }
+    function playObserveNote(){
+      const notes=[261.6,293.7,329.6,392,440,523.3];
+      const freq=notes[Math.floor(Math.random()*notes.length)];
+      const now=c2.currentTime,end=now+4;
+      const o=c2.createOscillator(),g=c2.createGain();
+      o.type='sine';o.frequency.value=freq;
+      g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.025,now+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001,end);
+      o.connect(g);g.connect(c2.destination);o.start(now);o.stop(end+0.1);
+      trackNode(o,g);
+    }
+    audioInterval=setInterval(()=>{
+      const v=$('breathVoice').value;
+      if(v==='silent'){killSound();return;}
+      if(Math.random()<0.3)playObserveNote();
+      if(Math.random()<0.15)playObserveBed();
+    },4000);
+    // Initial bed if not silent
+    if($('breathVoice').value!=='silent')playObserveBed();
 
     const ctrl=new AbortController();bAbort=ctrl;
     const tmr=setInterval(()=>{
@@ -1122,7 +1121,7 @@ function stopB(){
 }
 
 async function runB(pat,rnds,sig){
-  const ci=$('breathCircle'),ph=$('breathPhase'),cd=$('breathCountdown'),info=$('breathInfo'),glow=$('breathGlow'),dots=$('breathProgress').children,voice=$('breathVoice').value;
+  const ci=$('breathCircle'),ph=$('breathPhase'),cd=$('breathCountdown'),info=$('breathInfo'),glow=$('breathGlow'),dots=$('breathProgress').children;
   const t0=Date.now();let logged=false,curR=1;
   const isCosmic=cPat==='coherent';
   const modeColor=pat.hex||'#6B8C42';
@@ -1161,7 +1160,7 @@ async function runB(pat,rnds,sig){
 
         ph.textContent=(pN==='In'||pN==='Out')?'Breathe':(pN==='Rest'?'Rest':pN);
 
-        if(isH)playHold(dur,voice);else playTone(pN,dur,voice);
+        if(isH)playHold(dur,$('breathVoice').value);else playTone(pN,dur,$('breathVoice').value);
 
         const st=Date.now(),et=st+dur*1000;
         while(Date.now()<et){
