@@ -135,6 +135,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .apnea-hold-hint{font-size:0.72rem;color:var(--fg-faint);text-align:center;margin-top:4px}
 
 /* ═══ LOG ═══ */
+.log-eight-wrap{display:flex;justify-content:center;margin:8px 0 20px}
+.log-eight-wrap svg{display:block}
 .ground-group{margin-bottom:28px}
 .ground-group-title{font-size:0.7rem;font-weight:700;color:var(--fg-faint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px}
 .ground-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
@@ -317,11 +319,12 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   <!-- LOG -->
   <div class="section" id="sec-ground">
     <div class="section-sub" style="margin-top:4px">The essentials. Nothing more.</div>
+    <div class="log-eight-wrap"><svg id="logEight" viewBox="0 0 320 160" width="240" height="120" xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="ground-group"><div class="ground-group-title">Body</div>
       <div class="ground-item" data-key="moved"><div class="ground-item-left"><div class="ground-item-label">Moved</div><div class="ground-item-why">Any deliberate physical effort</div></div><div class="toggle body" data-key="moved"></div></div>
       <div class="ground-item" data-key="sleptWell"><div class="ground-item-left"><div class="ground-item-label">Slept well</div><div class="ground-item-why">Enough rest, roughly on rhythm</div></div><div class="toggle body" data-key="sleptWell"></div></div>
       <div class="ground-item" data-key="nourished"><div class="ground-item-left"><div class="ground-item-label">Nourished</div><div class="ground-item-why">Ate with intention, not compulsion</div></div><div class="toggle body" data-key="nourished"></div></div>
-      <div class="ground-item" data-key="alcoholFree"><div class="ground-item-left"><div class="ground-item-label">Clear vessel</div><div class="ground-item-why">Alcohol-free</div></div><div class="toggle body" data-key="alcoholFree"></div></div>
+      <div class="ground-item" data-key="alcoholFree"><div class="ground-item-left"><div class="ground-item-label">Clear vessel</div><div class="ground-item-why">Chose clarity over numbing</div></div><div class="toggle body" data-key="alcoholFree"></div></div>
     </div>
     <div class="ground-group"><div class="ground-group-title">Mind</div>
       <div class="ground-item" data-key="meditated"><div class="ground-item-left"><div class="ground-item-label">Found stillness</div><div class="ground-item-why">Any contemplative pause</div></div><div class="toggle mind" data-key="meditated"></div></div>
@@ -333,6 +336,16 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
     <div class="ground-group"><div class="ground-group-title">Metrics</div>
       <div class="ground-item"><div class="ground-item-left"><div class="ground-item-label">Weight</div></div><div class="ground-num"><input type="text" inputmode="decimal" id="inWeight" placeholder="—"/><span class="unit">kg</span></div></div>
+    </div>
+    <div class="breath-guide-toggle" id="logGuideToggle">Practice guide</div>
+    <div class="breath-guide" id="logGuide">
+      <p>Eight practices. Not goals, not habits — practices. Each one is a way of paying attention.</p>
+      <p>The shape is the lemniscate: ∞. A path with no beginning and no end, energy passing from body through mind into spirit and returning again.</p>
+      <p>Across different traditions, eight often appears as a figure of wholeness: the Buddhist Eightfold Path, the eight trigrams of the <em>I Ching</em>, the sense of a full circuit rather than a straight line. Not perfection. Completion in motion.</p>
+      <p><strong>Body</strong> is the foundation. Four practices because the body has many needs and we easily neglect them. Did you move? Did you sleep? Did you nourish yourself? Did you choose clarity? The body is the instrument; everything else depends on its condition.</p>
+      <p><strong>Mind</strong> is the crossing point. Two practices: stillness and growth. One quiets; one expands. Together they help keep the mind from being either stagnant or frantic.</p>
+      <p><strong>Spirit</strong> is the outer reach. Two practices: observation and play. One is reverence — close attention to life beyond yourself. The other is joy — unforced contact with aliveness.</p>
+      <p>The point is not to complete the eight every day. The point is to see the shape of your day clearly — where you showed up and where you didn't — and to let that seeing, without judgment, orient tomorrow.</p>
     </div>
   </div>
 
@@ -1428,11 +1441,113 @@ async function runApnea(sig){
 }
 
 // ═══ LOG ═══
-function renderGround(){const e=gE(selDate);$$('#sec-ground .toggle').forEach(el=>el.classList.toggle('on',e[el.dataset.key]===1));$('inWeight').value=e.weight||'';}
+function renderGround(){
+  const e=gE(selDate);
+  $$('#sec-ground .toggle').forEach(el=>el.classList.toggle('on',e[el.dataset.key]===1));
+  $('inWeight').value=e.weight||'';
+  renderLogEight(e);
+}
+
+function renderLogEight(e){
+  const svg=$('logEight');
+  const colors={body:'#6B8C42',mind:'#5A8BA5',spirit:'#C49A4A'};
+  const dim='#2A2C24';
+
+  // Lemniscate of Bernoulli parametric
+  const a=130, cx=160, cy=80;
+  const steps=160;
+
+  function lemnPoint(t){
+    const st=Math.sin(t),ct=Math.cos(t);
+    const denom=1+st*st;
+    return { x: cx + a*ct/denom, y: cy + a*st*ct/denom };
+  }
+
+  const pts=[];
+  for(let i=0;i<=steps;i++){
+    pts.push(lemnPoint(i*2*Math.PI/steps));
+  }
+
+  // The parametric lemniscate traces: t=0 rightmost, t=π/2 centre (crossing up-left),
+  // t=π leftmost, t=3π/2 centre (crossing down-right), t=2π rightmost again.
+  // So: right loop = t from ~7π/4 through 0 to ~π/4 (top) and ~3π/4 down to ~5π/4
+  // Actually simpler: t=0..π traces right-loop-top → crossing → left-loop → crossing-back
+  //                   t=π..2π traces right-loop-bottom (return)
+  // 
+  // Split into 8 equal segments by parameter t:
+  //   Seg 0 (t: 0/8 to 1/8): right loop top — Spirit
+  //   Seg 1 (t: 1/8 to 2/8): crossing upper-left — Mind
+  //   Seg 2 (t: 2/8 to 3/8): left loop top — Body
+  //   Seg 3 (t: 3/8 to 4/8): left loop leftmost — Body
+  //   Seg 4 (t: 4/8 to 5/8): left loop bottom — Body
+  //   Seg 5 (t: 5/8 to 6/8): crossing lower-right — Mind
+  //   Seg 6 (t: 6/8 to 7/8): right loop bottom — Spirit (wait, wrong)
+  // 
+  // This doesn't give 4 body on left. Let me trace more carefully:
+  // t=0: rightmost point. Going counterclockwise:
+  // t=0→π/2: right loop upper half → arrives at centre crossing
+  // t=π/2→π: centre → left loop upper half → arrives at leftmost
+  // t=π→3π/2: left loop lower half → arrives at centre crossing  
+  // t=3π/2→2π: centre → right loop lower half → arrives back at rightmost
+  //
+  // 8 equal segments of π/4 each:
+  // Seg 0: t=0→π/4      right loop upper    = Spirit
+  // Seg 1: t=π/4→π/2    right to crossing   = Spirit  
+  // Seg 2: t=π/2→3π/4   crossing to left    = Mind
+  // Seg 3: t=3π/4→π     left loop upper     = Body
+  // Seg 4: t=π→5π/4     left loop lower     = Body
+  // Seg 5: t=5π/4→3π/2  left to crossing    = Body
+  // Seg 6: t=3π/2→7π/4  crossing to right   = Mind/Body
+  // Seg 7: t=7π/4→2π    right loop lower    = Spirit
+  //
+  // Better clean mapping — 4 body on left, 2 mind at crossings, 2 spirit on right:
+  // Seg 0: right top     → Spirit (observed)
+  // Seg 1: right→cross   → Mind (learned)
+  // Seg 2: cross→left    → Body (moved)
+  // Seg 3: left top      → Body (sleptWell)  
+  // Seg 4: left bottom   → Body (nourished)
+  // Seg 5: left→cross    → Body (alcoholFree)
+  // Seg 6: cross→right   → Mind (meditated)
+  // Seg 7: right bottom  → Spirit (connected)
+
+  const segDefs=[
+    {key:'observed',   cat:'spirit'},  // 0: right loop top
+    {key:'learned',    cat:'mind'},    // 1: right→crossing
+    {key:'moved',      cat:'body'},    // 2: crossing→left
+    {key:'sleptWell',  cat:'body'},    // 3: left loop top
+    {key:'nourished',  cat:'body'},    // 4: left loop bottom
+    {key:'alcoholFree',cat:'body'},    // 5: left→crossing
+    {key:'meditated',  cat:'mind'},    // 6: crossing→right
+    {key:'connected',  cat:'spirit'}   // 7: right loop bottom
+  ];
+
+  const segSize=steps/8;
+  let html='';
+
+  for(let s=0;s<8;s++){
+    const si=Math.round(s*segSize);
+    const ei=Math.round((s+1)*segSize);
+    let d='M '+pts[si].x.toFixed(1)+' '+pts[si].y.toFixed(1);
+    for(let i=si+1;i<=ei&&i<pts.length;i++){
+      d+=' L '+pts[i].x.toFixed(1)+' '+pts[i].y.toFixed(1);
+    }
+    const seg=segDefs[s];
+    const on=e[seg.key]===1;
+    const col=on?colors[seg.cat]:dim;
+    html+=`<path d="${d}" stroke="${col}" stroke-width="${on?3:1.5}" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition:stroke 0.4s,stroke-width 0.4s"/>`;
+  }
+
+  svg.innerHTML=html;
+}
 function initGround(){
-  $$('#sec-ground .toggle').forEach(el=>{el.addEventListener('click',()=>{const k=el.dataset.key,c=gE(selDate),nv=c[k]===1?0:1;pE(selDate,{[k]:nv});el.classList.toggle('on',nv===1);});});
+  $$('#sec-ground .toggle').forEach(el=>{el.addEventListener('click',()=>{const k=el.dataset.key,c=gE(selDate),nv=c[k]===1?0:1;pE(selDate,{[k]:nv});el.classList.toggle('on',nv===1);renderLogEight(gE(selDate));});});
   $$('#sec-ground .ground-item[data-key]').forEach(row=>{row.addEventListener('click',(e)=>{if(e.target.closest('.toggle')||e.target.closest('input'))return;const t=row.querySelector('.toggle');if(t)t.click();});});
   $('inWeight').addEventListener('blur',(e)=>{const v=parseFloat(e.target.value);pE(selDate,{weight:isNaN(v)?null:v});});
+  $('logGuideToggle').addEventListener('click',()=>{
+    const g=$('logGuide');
+    g.classList.toggle('open');
+    $('logGuideToggle').textContent=g.classList.contains('open')?'Close guide':'Practice guide';
+  });
 }
 
 // ═══ REFLECT ═══
